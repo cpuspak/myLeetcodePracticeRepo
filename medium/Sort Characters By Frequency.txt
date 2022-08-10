@@ -1,0 +1,82 @@
+//heap soln
+class Solution {
+public:
+    unordered_map<char, int> map;
+    string frequencySort(string s) {
+        
+        for(char c: s){
+            if (map.find(c) == map.end()) map[c] = 1;
+            else map[c]++;
+        }
+        priority_queue<char, vector<char>, comperator> pq{comperator(map)};
+        
+        for(pair<char, int> c: map) pq.push(c.first);
+        string ans = "";
+        while(!pq.empty()){
+            char temp = pq.top();
+            //cout << temp << " " << map[temp] << endl;
+            for(int i = 0 ; i < map[temp] ; i++) ans.push_back(temp);
+            pq.pop();
+        }
+        return ans;
+        
+        
+    }
+    
+    class comperator{
+        unordered_map<char, int> map;
+        public:
+            comperator(const unordered_map<char, int> tempMap) {map = tempMap;}
+            inline bool operator() (char char1, char char2){
+                return map[char1] < map[char2];
+            }
+    };
+    
+};
+
+//bucket sort soln
+//1st with greater space
+class Solution {
+public:
+    string frequencySort(string s) {
+        unordered_map<char,int> freq;
+        vector<string> bucket(s.size()+1, "");
+        string res;
+        
+        //count frequency of each character
+        for(char c:s) freq[c]++;
+        //put character into frequency bucket
+        for(auto& it:freq) {
+            int n = it.second;
+            char c = it.first;
+            bucket[n].append(n, c);
+        }
+        //form descending sorted string
+        for(int i=s.size(); i>0; i--) {
+            if(!bucket[i].empty())
+                res.append(bucket[i]);
+        }
+        return res;
+    }
+};
+
+//2nd with map(ordered map)
+string frequencySort(string s) {
+        unordered_map<char, int> freqOfChar;
+        for(char c : s) {
+            freqOfChar[c] ++;
+        }
+        
+        map<int, string> dupStr;
+        for(auto v : freqOfChar) {
+            char c = v.first;
+            int n = v.second;
+            dupStr[n] += string(n, c);
+        }
+        
+        string res;
+        for(auto rit = dupStr.rbegin(); rit != dupStr.rend(); ++rit) {
+            res += rit->second;
+        }
+        return res;
+    }

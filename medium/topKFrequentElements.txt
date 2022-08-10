@@ -1,0 +1,97 @@
+//soln using heap and unordered_map
+class Solution {
+public:
+    typedef struct eleToMap {
+        int val;
+        int freq;
+    } eleToMap;
+    
+    
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> mapOfFreq;    
+        unordered_map<int, int> inserted;
+        
+        priority_queue<eleToMap, vector<eleToMap>, compareFreq> pq;
+        for (int i = 0 ; i < nums.size() ; i++){
+            if (mapOfFreq.find(nums[i]) == mapOfFreq.end()){
+                mapOfFreq[nums[i]] = 1;
+            } else {
+                mapOfFreq[nums[i]] = mapOfFreq[nums[i]] + 1;
+            }
+        }
+        
+        for (int i = 0 ; i < nums.size() ; i++){
+            if (inserted.find(nums[i]) == inserted.end()){
+                inserted[nums[i]] = 1;
+                eleToMap temp;
+                temp.val = nums[i];
+                temp.freq = mapOfFreq[nums[i]];
+                pq.push(temp);
+                if (pq.size() > k) pq.pop();
+            }
+        }
+        
+        vector<int> ans;
+        while (!pq.empty()) {
+            ans.push_back(pq.top().val);
+            pq.pop();
+        }
+        return ans;
+        
+        
+    }
+    struct compareFreq {
+        bool operator()(eleToMap ele1, eleToMap ele2){
+            return ele1.freq > ele2.freq;
+        }
+    };
+    
+    
+};
+
+
+//bucket sort
+
+class Solution {
+public:
+    
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        
+        vector<vector<int>> bucket(nums.size()+1, vector<int>(0));
+        
+        unordered_map<int, int> mapOfFreq;
+        
+        //cout << "here";
+        for (int i = 0 ; i < nums.size() ; i++){
+            //cout<<i;
+            if (mapOfFreq.find(nums[i]) == mapOfFreq.end()){
+                mapOfFreq[nums[i]] = 1;
+                //cout << i;
+            } else {
+                mapOfFreq[nums[i]] ++;
+            }
+            //cout << i;
+            
+        }
+        
+        cout << "here";
+        for (auto it = mapOfFreq.begin() ; it != mapOfFreq.end() ; it++){
+            bucket[(*it).second].push_back((*it).first);
+        }
+        
+        vector<int> ans;
+        for (int i = bucket.size() - 1 ; i >= 0 ; i--){
+            if (bucket[i].size() > 0){
+                for (int j = 0 ; j < bucket[i].size() ; j++ ){
+                    ans.push_back(bucket[i][j]);
+                    k--;
+                    if (k == 0) break;
+                }
+            }
+            if (k == 0) break;
+        }
+        return ans;
+    }
+    
+    
+};

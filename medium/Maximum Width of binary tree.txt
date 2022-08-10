@@ -1,0 +1,60 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int height = 0;
+    void dfs(TreeNode* root, int curHeight){
+        if (!root) return;
+        cout << root->val << " " << curHeight << endl;
+        if (curHeight > height) height = curHeight;
+        dfs(root->left, curHeight + 1);
+        dfs(root->right, curHeight + 1);
+    }
+    
+    
+    
+    long long int widthOfBinaryTree(TreeNode* root) {
+        if (!root) return 0;
+        unsigned int left = 1, right = 1, maxWidth = 1;
+        
+        vector<pair<unsigned int,TreeNode*>> curTravel, nextTravel;
+        curTravel.push_back(make_pair(1,root));
+        
+        while(!curTravel.empty()){
+            //cout << curTravel.size() << endl;
+            for(int i = 0 ; i < curTravel.size() ; i++){
+                if (curTravel[i].second->left) {
+                    nextTravel.push_back(make_pair(curTravel[i].first*2,curTravel[i].second->left));
+                    //cout << curTravel[i].second->left->val << " " << curTravel[i].first*2 << endl;
+                }
+                    
+                if (curTravel[i].second->right) {
+                    nextTravel.push_back(make_pair((curTravel[i].first*2+1),curTravel[i].second->right));
+                    //cout << curTravel[i].second->right->val << " " << curTravel[i].first*2+1 << endl;
+                }
+                    
+            }
+            if (nextTravel.size() > 0 && (*(nextTravel.end() - 1)).first - nextTravel[0].first + 1 > maxWidth){
+                maxWidth = (*(nextTravel.end() - 1)).first - nextTravel[0].first + 1;
+                //cout << (*(nextTravel.end() - 1)).first << " " << nextTravel[0].first << endl;
+            }
+                
+            curTravel = nextTravel;
+            nextTravel.resize(0);
+        }
+        return maxWidth;
+        
+        
+        
+        
+    }
+};

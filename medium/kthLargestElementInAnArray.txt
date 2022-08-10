@@ -1,0 +1,62 @@
+//using max heap
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int, vector<int>, comparator> pq;
+        
+        for (auto it = nums.begin() ; it != nums.end() ; it++){
+            pq.push(*it);
+        }
+        for (int i = 0 ; i < k-1 ; i++) pq.pop();
+        return pq.top();
+        
+    }
+    
+    struct comparator{
+        bool operator()(int ele1, int ele2){
+            return ele1 < ele2;
+        }
+    };
+};
+
+//using quickselect
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+    
+        int left = 0;
+        int right = nums.size() - 1;
+        
+        while(true){
+            int pivot = getPivot(left, right, nums);
+            if (pivot==(k-1)) break;
+            else if (pivot < k-1) left = pivot + 1;
+            else right = pivot - 1;
+        }
+        displayArr(nums);
+        return nums[k-1];
+        
+    }
+    
+    int getPivot(int left, int right, vector<int>& nums){
+        int pivot = left;
+        while(left <= right){
+            while(left <= right && nums[left] >= nums[pivot])left++;
+            while(left <= right && nums[right] <= nums[pivot])right--;
+            if(left <= right){
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+            }
+        }
+        int temp = nums[left - 1];
+        nums[left-1] = nums[pivot];
+        nums[pivot] = temp;
+        return left-1;
+    }
+    void displayArr(vector<int> nums){
+        for(int n: nums) cout << n << " ";
+        cout << endl;
+    }
+    
+};

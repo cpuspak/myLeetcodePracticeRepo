@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int count = 1;
+        int majorityEle = nums[0];
+        for (int i = 1 ; i < nums.size() ; i++){
+            if (count == 0){
+                majorityEle = nums[i];
+            }
+            if (nums[i] == majorityEle){
+                count ++;
+            } else {
+                count --;
+            }
+        }
+        return majorityEle;
+    }
+};
+
+//Boyer Moore majority voting algo

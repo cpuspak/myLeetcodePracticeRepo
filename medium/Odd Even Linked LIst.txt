@@ -1,0 +1,62 @@
+//my soln
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    
+    void display(ListNode* head){
+        ListNode* tempHead = head;
+        while(tempHead) {
+            cout << tempHead->val << " ";
+            tempHead = tempHead->next;
+        }
+        cout << endl;
+    }
+    
+    ListNode* oddEvenList(ListNode* head) {
+        if (!head || !head->next) return head;
+        ListNode *first = head, *second = head->next;
+        
+        while(second && second->next){
+            ListNode* firstNext = first->next;
+            ListNode* secondNext = second->next->next;
+            first->next = second->next;
+            second->next = second->next->next;
+            first->next->next = firstNext;
+            
+            first = first->next;
+            second = secondNext;
+            //display(head);
+        }
+        return head;
+    }
+};
+
+
+//easily readable soln
+public ListNode oddEvenList(final ListNode head) {
+	if (head == null || head.next == null) {
+		return head;
+	}
+
+	ListNode odd = head;
+	final ListNode eHead = head.next;
+	ListNode even = eHead;
+	while (even != null && even.next != null) {
+		odd.next = even.next;
+		odd = odd.next;
+		even.next = odd.next;
+		even = even.next;
+	}
+
+	odd.next = eHead;
+	return head;
+}

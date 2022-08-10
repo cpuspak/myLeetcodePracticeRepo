@@ -1,0 +1,60 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> ans;
+    
+    int dfs(TreeNode* root, TreeNode* target, int k, int distOrDepth){
+        if (!root) return 0;
+        int left, right;
+        if (distOrDepth == k) {
+            ans.push_back(root->val);
+            return 0;
+        }
+        if (distOrDepth > 0 || root == target){
+            left = dfs(root->left, target, k, distOrDepth+1);
+            right = dfs(root->right, target, k, distOrDepth+1);
+        } else {
+            left = dfs(root->left, target, k, distOrDepth);
+            right = dfs(root->right, target, k, distOrDepth);
+        }
+        //cout << root->val << " " << left << " " << right << " " << distOrDepth << endl;
+        
+        if (left == k || right == k){
+            ans.push_back(root->val);
+            return 0;
+        }
+        
+        if (target == root) return 1;
+        
+        if (left > 0){
+            dfs(root->right, target, k, left+1);
+            return left+1;
+        }
+        if (right > 0){
+            dfs(root->left, target, k, right+1);
+            return right+1;
+        }
+        return 0;
+    }
+    
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        if (!root->left && !root->right && k != 0) return vector<int>();
+        if (k == 0) {
+            ans.push_back(target->val);
+            return ans;
+        }
+        dfs(root, target, k, 0);
+        return ans;
+        
+        
+        
+    }
+};

@@ -1,0 +1,18 @@
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        if (amount == 0) return 0;
+        sort(coins.begin(), coins.end());
+        vector<int> ansArr(amount+1, int(amount/coins[0])+1);
+        ansArr[0] = 0;
+        for(int n: coins){
+            for(int i = 1 ; i <= amount ; i++){
+                if (n <= i){
+                    ansArr[i] = min(ansArr[i - n] + 1, ansArr[i]);
+                }
+            }
+        }
+        if (ansArr[amount] != (int(amount/coins[0])+1)) return ansArr[amount];
+        return -1;
+    }
+};

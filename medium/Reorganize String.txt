@@ -1,0 +1,68 @@
+//greedy soln
+class Solution {
+public:
+    
+    string reorganizeString(string s) {
+        int freqMap[26] = {0};
+        int maxFreq = 0;
+        char maxFreqChar;
+        string ans(s.length(), ' ');
+        
+        for (int i = 0 ; i < s.length() ; i++){
+            freqMap[(char)(s[i]-'a')]++;
+            if (freqMap[(char)(s[i]-'a')] > maxFreq){
+                maxFreq = freqMap[(char)(s[i]-'a')];
+                maxFreqChar = s[i];
+            }
+        }
+        
+        if (maxFreq > (int)(s.length() / 2) + (1*(s.length() % 2))) return "";
+        
+        int index = 0;
+        while(freqMap[(int)(maxFreqChar-'a')]){
+            ans[index] = maxFreqChar;
+            index = (index+2)%s.length();
+            freqMap[(int)(maxFreqChar-'a')]--;
+        }
+        if (index == 0) index = 1;
+        for(int i = 0 ; i < 26 ; i++){
+            while(freqMap[i]){
+                ans[index] = (char)(i+'a');
+                index = (index+2)%s.length();
+                freqMap[i]--;
+                if (index == 0) index = 1;
+            }
+        }
+        return ans;
+        
+        
+        
+    }
+};
+
+
+//heap soln
+The idea is to build a max heap with freq. count
+a) At each step, we choose the element with highest freq (a, b) where b is the element, to append to result.
+b) Now that b is chosen. We cant choose b for the next loop. So we dont add b with decremented value count immediately into the heap. Rather we store it in prev_a, prev_b variables.
+c) Before we update our prev_a, prev_b variables as mentioned in step 2, we know that whatever prev_a, prev_b contains, has become eligible for next loop selection. so we add that back in the heap.
+
+In essence,
+
+at each step, we make the currently added one ineligible for next step, by not adding it to the heap
+at each step, we make the previously added one eligible for next step, by adding it back to the heap
+ def reorganizeString(self, S):
+        res, c = [], Counter(S)
+        pq = [(-value,key) for key,value in c.items()]
+        heapq.heapify(pq)
+        p_a, p_b = 0, ''
+        while pq:
+            a, b = heapq.heappop(pq)
+            res += [b]
+            if p_a < 0:
+                heapq.heappush(pq, (p_a, p_b))
+            a += 1
+            p_a, p_b = a, b
+        res = ''.join(res)
+        if len(res) != len(S): return ""
+        return res

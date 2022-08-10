@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        if (s.length() == 0) return 0;
+        int left = 0, right = 1, maxLength = 1;
+        
+        unordered_map<char,int> visitedChars;
+        
+        visitedChars[s[0]] = 0;
+        
+        while(right < s.length()){
+            //cout << left << " " << right << endl;
+            if (visitedChars.find(s[right]) == visitedChars.end() || left == right || visitedChars[s[right]] < left){
+                visitedChars[s[right]] = right;
+                right++;
+                if((right - left) > maxLength) maxLength = (right - left);
+            } else {
+                left = visitedChars[s[right]];
+                if (left != right) left++;
+                visitedChars[s[right]] = right;
+                right++;
+            }
+        }
+        return maxLength;
+    }
+};

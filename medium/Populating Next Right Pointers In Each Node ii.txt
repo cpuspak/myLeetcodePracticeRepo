@@ -1,0 +1,95 @@
+
+//O(1) space [O(n) space is easy just use a queue]
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+*/
+
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if (!root || (!root->left && !root->right)) return root;
+        Node* curFirstParent = root;
+        Node* currentParent = curFirstParent;
+        Node* currentChild;
+        Node* nextParent;
+        Node* nextChild;
+        if (currentParent->left) currentChild = currentParent->left;
+        else currentChild = currentParent->right;
+        while(curFirstParent && currentChild){
+            cout << currentParent->val << " " << curFirstParent->val << " " << currentChild->val << " " << endl;
+            nextParent = currentParent;
+            if (currentParent->left == currentChild && currentParent->right){
+                nextChild = currentParent->right;
+            } else if (currentParent->right == currentChild){
+                nextParent = currentParent->next;
+                while(nextParent){
+                    if (!nextParent) break;
+                    if (nextParent->left) {
+                        nextChild = nextParent->left;
+                        break;
+                    }
+                    else if (nextParent->right) {
+                        nextChild = nextParent->right;
+                        break;
+                    }
+                    else nextParent = nextParent->next;
+                }
+            } else {
+                nextParent = currentParent->next;
+                while(nextParent){
+                    if (!nextParent) break;
+                    if(nextParent->left) {
+                        nextChild = nextParent->left;
+                        break;
+                    }
+                    else if(nextParent->right) {
+                        nextChild = nextParent->right;
+                        break;
+                    }
+                    else nextParent = nextParent->next;
+                }
+            }
+            if (!nextParent) {
+                while(curFirstParent && !curFirstParent->left && !curFirstParent->right){
+                    curFirstParent = curFirstParent->next;
+                }
+                if (curFirstParent == NULL) break;
+                else {
+                    if (curFirstParent->left){
+                        curFirstParent = curFirstParent->left;
+                    } else {
+                        curFirstParent = curFirstParent->right;
+                    }
+                    while(curFirstParent && !curFirstParent->left && !curFirstParent->right) 
+                        curFirstParent = curFirstParent->next;
+                    if (curFirstParent == NULL) break;
+                    else currentParent = curFirstParent;
+                    if (currentParent->left) currentChild = currentParent->left;
+                    else currentChild = currentParent->right;
+                    continue;
+                }
+            }
+            else {
+                currentChild->next = nextChild;
+                currentChild = nextChild;
+                currentParent = nextParent;
+            }
+        }
+        return root;
+        
+    }
+};

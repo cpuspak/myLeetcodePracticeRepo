@@ -1,0 +1,25 @@
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        vector<int> prefixProd;
+        vector<int> suffixProd;
+        vector<int> ansArr;
+        for (int i = 0 ; i < nums.size() ; i++){
+            if (i == 0) prefixProd.push_back(nums[i]);
+            else prefixProd.push_back(prefixProd[i-1]*nums[i]);
+        }
+        int index = 0;
+        for (int i = nums.size()-1 ; i >= 0 ; i--){
+            if (i == nums.size()-1) suffixProd.push_back(nums[i]);
+            else suffixProd.push_back(suffixProd[index-1]*nums[i]);
+            index++;
+        }
+        
+        for (int i = 0 ; i < nums.size() ; i++){
+            if (i == 0) ansArr.push_back(suffixProd[nums.size() - 2]);
+            else if (i == nums.size() - 1) ansArr.push_back(prefixProd[nums.size() - 2]);
+            else ansArr.push_back(prefixProd[i - 1] * suffixProd[nums.size() - i - 2]);
+        }
+        return ansArr;   
+    }
+};

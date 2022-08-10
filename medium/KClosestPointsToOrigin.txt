@@ -1,0 +1,85 @@
+//max heap solution
+
+class Solution {
+public:
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int K) {
+        priority_queue<vector<int>, vector<vector<int>>, compare> pq;
+        for (vector<int>& point : points) {
+            pq.push(point);
+            if (pq.size() > K) {
+                pq.pop();
+            }
+        }
+        vector<vector<int>> ans;
+        while (!pq.empty()) {
+            ans.push_back(pq.top());
+            pq.pop();
+        }
+        return ans;
+    }
+private:
+    struct compare {
+        bool operator()(vector<int>& p, vector<int>& q) {
+            return p[0] * p[0] + p[1] * p[1] < q[0] * q[0] + q[1] * q[1];
+        }
+    };
+};
+
+
+//quick select solution
+class Solution {
+public:
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
+        int left= 0;
+        int right = points.size() - 1;
+        //cout << right << endl;
+        while(left < right){
+            //int mid = (left + right)/2;
+            //cout << "before quick select " << endl;
+            int pivot = quickSelect(left, right, points);
+            //displayArr(points);
+            //cout << pivot << endl;
+            if (pivot == k) break;
+            else if (pivot > k){
+                right = pivot - 1;
+            } else left = pivot + 1;
+        }
+        vector<vector<int>> ans(points.begin(), points.begin() + k);
+        return ans;
+    }
+    
+    int quickSelect(int left, int right, vector<vector<int>>& points){
+        int pivot = left;
+        //left++;
+        while(left <= right){
+            //cout << left << " " << right << " " << pivot << endl;
+            while(left <= right && compare(points[left], points[pivot]) <= 0)left++;
+            while(left <= right && compare(points[right], points[pivot]) >= 0)right--;
+            //cout << left << " " << right << " " << pivot << endl;
+            if (left <= right){
+                vector<int> temp = points[left];
+                points[left] = points[right];
+                points[right] = temp;
+            }
+            
+        }
+        
+        vector<int> temp = points[left-1];
+        points[left-1] = points[pivot];
+        points[pivot] = temp;
+        return left-1;
+        
+    }
+    
+    int compare(vector<int> point1, vector<int> point2){
+        return point1[0]*point1[0] + point1[1]*point1[1] - (point2[0]*point2[0] + point2[1]*point2[1]);
+        //if it returns +ve then point1 is farther from origin than point2
+    }
+    
+    void displayArr(vector<vector<int>> points){
+        for(int i = 0 ; i < points.size() ; i++){
+            cout << "[" <<points[i][0] << ", " << points[i][1] << "],";
+        }
+        cout << endl;
+    }
+};

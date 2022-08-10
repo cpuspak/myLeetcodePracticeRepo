@@ -1,0 +1,65 @@
+class Solution {
+public:
+    
+    int backtrack(int begin, string s, vector<int>& dp){
+        if (s.at(begin) == '0') {
+            dp[begin] = 0;
+            return 0;
+        }
+        if (begin == s.length() - 1){
+            int convertedInt = convertToInt(s.substr(begin, 1));
+            dp[begin] = 1;
+            return 1;
+        }
+        else if (begin == s.length() - 2){
+            if (dp[begin+1] == -1){
+                dp[begin+1] = backtrack(begin+1,s,dp);
+            }
+            int convertedInt = convertToInt(s.substr(begin,2));
+            if (convertedInt <= 26) {
+                dp[begin] = dp[begin+1] + 1;
+            }
+            else dp[begin] = dp[begin+1];
+            return dp[begin];
+            
+        } else {
+            if (dp[begin+1] == -1){
+                dp[begin+1] = backtrack(begin+1,s,dp);
+            }
+            int convertedInt = convertToInt(s.substr(begin,2));
+            if (convertedInt <= 26){
+                if (dp[begin+2] == -1){
+                    dp[begin+2] = backtrack(begin+2,s,dp);
+                }
+                dp[begin] = dp[begin+1] + dp[begin+2];
+                return dp[begin];
+            }
+            dp[begin] = dp[begin+1];
+            return dp[begin];
+        }
+        
+        
+    }
+    
+    int convertToInt(string s){
+        int sum = 0;
+        for (int i = 0 ; i < s.length() ; i++){
+            sum += (int)(s.at(i) - '0');
+            sum *= 10;
+        }
+        sum /= 10;
+        //cout << sum << " " << s << endl;
+        return sum;
+    }
+    
+    
+    int numDecodings(string s) {
+        vector<int> dp(s.length(), -1);
+        //dp[s.length() - 1] = 1;
+        backtrack(0, s, dp);
+        // for(auto it = dp.begin() ; it != dp.end() ; it++){
+        //     cout << "["<<(*it).first << ","<<(*it).second<<"]" << endl;
+        // }
+        return dp[0];
+    }
+};

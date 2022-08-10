@@ -1,0 +1,21 @@
+class Solution {
+public:
+    vector<int> countBits(int n) {
+        int count = 0;
+        int curPow = 2;
+        int curIndex = 0;
+        vector<int> ans(1,0);
+        if (n == 0) {
+            return ans;
+        }
+        for (int i = 1 ; i <= n ; i++){
+            if (i == curPow) {
+                curPow *= 2;
+                curIndex = 0;
+            }
+            ans.push_back(ans[curIndex] + 1);
+            curIndex ++;
+        }
+        return ans;
+    }
+};

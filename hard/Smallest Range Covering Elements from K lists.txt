@@ -1,0 +1,114 @@
+// my soln using hash table , heap and two pointer
+class Solution {
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        priority_queue<pair<int, int>, vector<pair<int, int>>, comperator> pq;
+        
+        for(int i = 0 ; i < nums.size() ; i++){
+            for(int j = 0 ; j < nums[i].size() ; j++){
+                pq.push(make_pair(nums[i][j], i));
+            }
+        }
+        vector<pair<int, int>> traversalList;
+        
+        while(!pq.empty()){
+            traversalList.push_back(pq.top());
+            pq.pop();
+        }
+        unordered_map<int, int> listMap;
+        
+        for(int i = 0 ; i < nums.size() ; i++){
+            listMap[i] = 0;
+        }
+        int noOfListsConsidered = 0;
+        vector<int> ans(2,0);
+        int left = 0, right = 0;
+        while(noOfListsConsidered < nums.size() && right < traversalList.size()){
+            if (listMap[traversalList[right].second] == 0){
+                noOfListsConsidered++;
+            }
+            listMap[traversalList[right].second]++;
+            right++;
+        }
+        
+        ans[0] = traversalList[left].first;
+        ans[1] = traversalList[right-1].first;
+        
+        if (ans[1] == ans[0]) return ans;
+        int flag = 1;
+        while(flag) {
+            while(noOfListsConsidered == nums.size()){
+                if (left == right) break;
+                if ((ans[1] - ans[0]) > (traversalList[right-1].first - traversalList[left].first)){
+                    ans[1] = traversalList[right-1].first;
+                    ans[0] = traversalList[left].first;
+                }
+                listMap[traversalList[left].second]--;
+                if (listMap[traversalList[left].second] == 0) noOfListsConsidered--;
+                left++;
+                
+                if (noOfListsConsidered < nums.size() && right >= traversalList.size()) flag = 0;
+            }
+            
+            while(noOfListsConsidered < nums.size()){
+                if (right >= traversalList.size()) break;
+                if (listMap[traversalList[right].second] == 0) noOfListsConsidered++;
+                listMap[traversalList[right].second]++;
+                right++;
+            }
+            
+            if (right >= traversalList.size() && noOfListsConsidered < nums.size()) break;
+            
+        }
+        
+        
+        return ans;
+        
+    }
+    
+    struct comperator {
+        bool operator()(pair<int, int> pair1, pair<int, int> pair2) {
+            return pair1.first > pair2.first;
+        }
+    };
+};
+
+//only heap soln
+Yes. The idea is just similar to Merge K Sorted List. Keep a priority queue of iterators/pointers which points to the current head of a row.
+
+class Solution {
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        typedef vector<int>::iterator vi;
+        
+        struct comp {
+            bool operator()(pair<vi, vi> p1, pair<vi, vi> p2) {
+                return *p1.first > *p2.first;
+            }
+        };
+        
+        int lo = INT_MAX, hi = INT_MIN;
+        priority_queue<pair<vi, vi>, vector<pair<vi, vi>>, comp> pq;
+        for (auto &row : nums) {
+            lo = min(lo, row[0]);
+            hi = max(hi, row[0]);
+            pq.push({row.begin(), row.end()});
+        }
+        
+        vector<int> ans = {lo, hi};
+        while (true) {
+            auto p = pq.top();
+            pq.pop();
+            ++p.first;
+            if (p.first == p.second)
+                break;
+            pq.push(p);
+            
+            lo = *pq.top().first;
+            hi = max(hi, *p.first);
+            if (hi - lo < ans[1] - ans[0])
+                ans = {lo, hi};
+        }
+        return ans;
+    }
+};

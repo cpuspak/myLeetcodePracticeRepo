@@ -1,0 +1,37 @@
+class Solution {
+public:
+    vector<vector<int>> ans;
+    //unordered_set<vector<int>> uniqueSet;
+    void addPerms(int begin, vector<int> nums){
+        if (begin == nums.size() - 1){
+            ans.push_back(nums);
+            return;
+        }
+        unordered_set<int> uniqueSet;
+        for (int i = begin ; i < nums.size() ; i++){
+            if (uniqueSet.find(nums[i]) != uniqueSet.end()) continue;
+            uniqueSet.insert(nums[i]);
+            swap(nums[i], nums[begin]);
+            addPerms(begin+1, nums);
+            swap(nums[i], nums[begin]);
+        }
+    }
+    
+    void swap(int& a, int& b){
+        int temp = a;
+        a = b;
+        b = temp;
+    }
+    
+    bool contains(vector<int> nums, vector<vector<int>> ans){
+        for (vector<int> n:ans)
+            if (n == nums) return true;
+        return false;
+    }
+    
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        //sort(nums.begin(), nums.end());
+        addPerms(0, nums);
+        return ans;
+    }
+};

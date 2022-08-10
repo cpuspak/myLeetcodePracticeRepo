@@ -1,0 +1,17 @@
+class Solution {
+public:
+    long long int getWaysToClimb(long long int arr[], int n){
+        if (n == 1) return 1;
+        if (n == 2) return 2;
+        if (arr[n] != 0) return arr[n];
+        arr[n] = (getWaysToClimb(arr, n-1) + getWaysToClimb(arr, n-2));
+        return arr[n];
+        
+    }
+    int climbStairs(int n) {
+        long long int arr[46] = {0};
+        long long int ans = getWaysToClimb(arr, n);
+        ///cout << ans;
+        return (int)ans;
+    }
+};

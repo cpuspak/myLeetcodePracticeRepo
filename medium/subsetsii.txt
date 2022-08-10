@@ -1,0 +1,47 @@
+class Solution {
+public:
+    
+    void backtrack(vector<vector<int>>& ans, vector<int> nums, int begin, vector<int> temp){
+        int lastPopped = -11;
+        ans.push_back(temp);
+        for(int i = begin ; i < nums.size() ; i++){
+            if (nums[i] != lastPopped){
+                temp.push_back(nums[i]);
+                backtrack(ans,nums,i+1,temp);
+                lastPopped = *(temp.end() - 1);
+                //cout << lastPopped << endl;
+                temp.pop_back();
+            }
+        }
+    }
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        vector<vector<int>> ans;
+        sort(nums.begin(), nums.end());
+        vector<int> temp;
+        backtrack(ans,nums,0,temp);
+        return ans;
+    }
+};
+
+//iterative soln
+class Solution {
+public:
+    vector<vector<int> > subsetsWithDup(vector<int> &S) {
+        vector<vector<int> > totalset = {{}};
+        sort(S.begin(),S.end());
+        for(int i=0; i<S.size();){
+            int count = 0; // num of elements are the same
+            while(count + i<S.size() && S[count+i]==S[i])  count++;
+            int previousN = totalset.size();
+            for(int k=0; k<previousN; k++){
+                vector<int> instance = totalset[k];
+                for(int j=0; j<count; j++){
+                    instance.push_back(S[i]);
+                    totalset.push_back(instance);
+                }
+            }
+            i += count;
+        }
+        return totalset;
+        }
+};

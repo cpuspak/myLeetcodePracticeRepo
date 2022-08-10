@@ -1,0 +1,30 @@
+class Solution {
+public:
+    
+    int findProperPos(int left, int right, vector<int> endIndices, int n){ // we can replace this function by using lower_bound in c++
+            while (right - left > 1) {
+                int mid = left + (right - left) / 2;
+                if (endIndices[mid] >= n)
+                    right = mid;
+                else
+                    left = mid;
+        }
+        return right;
+    }
+    
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> endIndices;
+        endIndices.push_back(nums[0]);
+        int length = 1;
+        for (int i = 1 ; i < nums.size() ; i++){
+            if(nums[i] <= endIndices[0]) endIndices[0] = nums[i];
+            else if (nums[i] > endIndices[length - 1]){
+                endIndices.push_back(nums[i]);
+                length++;
+            } else {
+                endIndices[findProperPos(0,length - 1,endIndices,nums[i])] = nums[i];
+            }
+        }
+        return length;
+    }
+};

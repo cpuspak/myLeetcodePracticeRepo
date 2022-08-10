@@ -1,0 +1,70 @@
+//heap soln O(nlogn)
+
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        priority_queue<int, vector<int>, comperator> pq;
+        unordered_map<int, int> uMap;
+        
+        for (int i = 0 ; i < k ; i++) {
+            pq.push(nums[i]);
+            
+            if (uMap.find(nums[i]) == uMap.end()) uMap[nums[i]] = 1;
+            else uMap[nums[i]]++;
+        }
+        
+        vector<int> ans;
+        ans.push_back(pq.top());
+        //uMap[nums[0]]--;
+        
+        for (int i = k ; i < nums.size() ; i++){
+            uMap[nums[i-k]]--;
+            pq.push(nums[i]);
+            if (uMap.find(nums[i]) == uMap.end()) uMap[nums[i]] = 1;
+            else uMap[nums[i]]++;
+            
+            while(uMap[pq.top()] == 0) pq.pop();
+            
+            //if (pq.size() == 0) break;
+            
+            ans.push_back(pq.top());
+            
+            //pq.pop();
+        }
+        return ans;
+        
+        
+        
+    }
+    
+    typedef struct comperator {
+        bool operator()(int a, int b){
+            return a < b;
+        }
+    } comperator;
+    
+    
+};
+
+
+//monotonic queue soln O(n)
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        deque<int> monotonicQueue;
+        vector<int> ans;
+        
+        for(int i = 0 ; i < nums.size() ; i++){
+            if (monotonicQueue.front() == i-k) monotonicQueue.pop_front();
+            
+            while(monotonicQueue.size() > 0 && nums[monotonicQueue.back()] < nums[i]) monotonicQueue.pop_back();
+            
+            monotonicQueue.push_back(i);
+            
+            if (monotonicQueue.size() > 0 && i >= k-1) ans.push_back(nums[monotonicQueue.front()]);
+            
+        }
+        return ans;
+        
+    }
+};

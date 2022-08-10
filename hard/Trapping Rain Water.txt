@@ -1,0 +1,51 @@
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int maxHeightIndex = 0, maxHeight = -1;
+        
+        for(int i = 0 ; i < height.size() ; i++){
+            if (height[i] > maxHeight) {
+                maxHeightIndex = i;
+                maxHeight = height[i];
+            }
+        }
+        
+        int totalWater = 0, currentWater = 0;
+        
+        int left = 0, right = height.size() - 1;
+        
+        while(left < maxHeightIndex && left < height.size() && height[left] == 0) left++;
+        if (left == height.size()) return 0;
+        while(right > maxHeightIndex && right >= 0 && height[right] == 0) right--;
+        
+        int currMaxHeight = height[left];
+        
+        for(int i = left+1 ; i <= maxHeightIndex ; i++){
+            if (height[i] > currMaxHeight) {
+                totalWater += currentWater;
+                currentWater = 0;
+                currMaxHeight = height[i];
+            }
+            else {
+                currentWater += (currMaxHeight - height[i]);
+            }
+        }
+        if (currentWater > 0) totalWater += currentWater;
+        currMaxHeight = height[right];
+        currentWater = 0;
+        for(int i = right-1 ; i >= maxHeightIndex ; i--){
+            if (height[i] > currMaxHeight) {
+                totalWater += currentWater;
+                currentWater = 0;
+                currMaxHeight = height[i];
+            }
+            else {
+                currentWater += (currMaxHeight - height[i]);
+            }
+        }
+        if (currentWater > 0) totalWater += currentWater;
+        
+        return totalWater;
+        
+    }
+};

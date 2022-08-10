@@ -1,0 +1,54 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    
+    ListNode* curHead;
+    
+    void recursion(ListNode* tempHead){
+        if (tempHead->next) {
+            recursion(tempHead->next);
+        }
+        //if (tempHead) cout << tempHead->val << endl;
+        
+        if (tempHead == curHead) tempHead->next = NULL;
+        else if (curHead->next == tempHead) tempHead->next = NULL;
+        else if (curHead->next->next == tempHead) {
+            curHead->next->next = NULL;
+            tempHead->next = curHead->next;
+            curHead->next = tempHead;
+        }
+        else{
+            tempHead->next = curHead->next;
+            curHead->next = tempHead;
+            curHead = curHead->next->next;
+        }
+    }
+    
+    void reorderList(ListNode* head) {
+        if (!head || !head->next || !head->next->next) return;
+        curHead = head;
+        ListNode *tempHead = head, *tempHeadFast = head;
+        
+        while(1){
+            if (!tempHeadFast->next || !tempHeadFast->next->next) {
+                //if (!tempHeadFast->next->next) tempHead = tempHead->next;
+                tempHead = tempHead->next;
+                break;
+            }
+            tempHead = tempHead->next;
+            tempHeadFast = tempHeadFast->next->next;
+        }
+        
+        
+        recursion(tempHead);
+    }
+};

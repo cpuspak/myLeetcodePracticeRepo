@@ -1,0 +1,80 @@
+//stack soln
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        if (root == NULL) return true;
+        stack<TreeNode*> utilStack;
+        utilStack.push(root);
+        TreeNode* pre = NULL;
+        TreeNode* rootTemp = root;
+        //rootTemp = rootTemp->left;
+        
+        while(utilStack.size() > 0){
+            while(rootTemp->left != NULL){
+                utilStack.push(rootTemp->left);
+                rootTemp = rootTemp->left;
+            }
+            TreeNode* topOfStack = utilStack.top();
+            utilStack.pop();
+            if (pre == NULL) pre = topOfStack;
+            else{
+                if (pre->val >= topOfStack->val) return false;
+                else pre = topOfStack;
+            }
+            if (topOfStack->right != NULL) {
+                utilStack.push(topOfStack->right);
+                rootTemp = topOfStack->right;
+            }
+            //if (topOfStack) cout << topOfStack->val << endl;
+        }
+        return true;
+    }
+};
+
+//recursive soln
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int started = 0;
+    bool isValidHelper(TreeNode* root, int &lastValue){
+        if (!root) return true;
+        if (!isValidHelper(root->left, lastValue)) return false;
+        
+        //cout << root->val << " " << lastValue << endl;
+        if (started == 0) started = 1;
+        else if (lastValue >= root->val) return false;
+        lastValue = root->val;
+        if (!isValidHelper(root->right, lastValue)) return false;
+        return true;
+    }
+    
+    bool isValidBST(TreeNode* root) {
+        TreeNode* tempRoot = root;
+        while(tempRoot->left != NULL) tempRoot = tempRoot->left;
+        int leastEle = tempRoot->val;
+        return isValidHelper(root, leastEle);
+        //return true;
+        
+    }
+};

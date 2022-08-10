@@ -1,0 +1,65 @@
+//recursive soln
+
+bool isSameTree(TreeNode *p, TreeNode *q) {
+    if (p == NULL || q == NULL) return (p == q);
+    return (p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right));
+}
+
+
+//iterative soln
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        queue<TreeNode*> pQueue;
+        queue<TreeNode*> qQueue;
+        
+        if (p == NULL && q == NULL) return true;
+        
+        if (p == NULL && q != NULL) return false;
+        if (p != NULL && q == NULL) return false;
+        
+        pQueue.push(p);
+        qQueue.push(q);
+        
+        if (p->val != q->val) return false;
+        
+        while(pQueue.size() != 0 && qQueue.size() != 0){
+            TreeNode* pFirstEle = pQueue.front();
+            pQueue.pop();
+            
+            TreeNode* qFirstEle = qQueue.front();
+            qQueue.pop();
+            
+            if (pFirstEle->val != qFirstEle->val) return false;
+            
+            if (pFirstEle->left != NULL && qFirstEle->left != NULL){
+                pQueue.push(pFirstEle->left);
+                qQueue.push(qFirstEle->left);
+            }
+            if (pFirstEle->right != NULL && qFirstEle->right != NULL){
+                pQueue.push(pFirstEle->right);
+                qQueue.push(qFirstEle->right);
+            }
+            if (pFirstEle->left == NULL && qFirstEle->left != NULL) return false;
+            if (pFirstEle->left != NULL && qFirstEle->left == NULL) return false;
+            
+            if (pFirstEle->right == NULL && qFirstEle->right != NULL) return false;
+            if (pFirstEle->right != NULL && qFirstEle->right == NULL) return false;
+        }
+        
+        if ((pQueue.size() == 0 && qQueue.size() != 0) || (pQueue.size() != 0 && qQueue.size() == 0)) return false;
+        return true;
+        
+    }
+};

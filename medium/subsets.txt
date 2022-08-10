@@ -1,0 +1,42 @@
+//iterative
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        int allSubsets = (int) pow(2,nums.size());
+        //cout << allSubsets;
+        vector<vector<int>> ans;
+        for(int i = allSubsets-1 ; i >= 0 ; i--){
+            vector<int> temp;
+            for (int j = 0 ; j < nums.size() ; j++){
+                //cout << i << " " << (1 << j) << endl;
+                if ((1 << j) & i) temp.push_back(nums[j]);
+            }
+            ans.push_back(temp);
+        }
+        return ans;
+    }
+};
+//recursive
+class Solution {
+public:
+    void backtrack(vector<vector<int>>& ans, vector<int> temp, int begin, vector<int> nums){
+        ans.push_back(temp);
+        for(int i = begin ; i < nums.size() ; i++){
+            cout << i << endl;
+            temp.push_back(nums[i]);
+            backtrack(ans, temp, i + 1, nums);
+            temp.pop_back();
+        }
+    }
+    
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> ans;
+        vector<int> temp;
+        
+        backtrack(ans, temp, 0, nums);
+        return ans;
+        
+        
+    }
+        
+};

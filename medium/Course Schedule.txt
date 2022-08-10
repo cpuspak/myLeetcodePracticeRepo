@@ -1,0 +1,85 @@
+//dfs soln
+class Solution {
+public:
+    
+    bool hasLoop(vector<vector<int>> &adjList, int curNode, vector<int>& visited){
+        if (visited[curNode] == 2) return true;
+        visited[curNode] = 2;
+        for(int i = 0 ; i < adjList[curNode].size() ; i++){
+            if (visited[adjList[curNode][i]] != 1){
+                if (visited[adjList[curNode][i]] == 2) return true;
+                if (hasLoop(adjList, adjList[curNode][i], visited)) return true;
+            }
+        }
+        visited[curNode] = 1;
+        return false;
+    }
+    
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        
+        vector<vector<int>> adjList(numCourses);
+        
+        for(int i = 0 ; i < prerequisites.size() ; i++){
+            adjList[prerequisites[i][1]].push_back(prerequisites[i][0]);
+        }
+        //cout << "here";
+        vector<int> visited(numCourses,0);
+        for(int i = 0 ; i < adjList.size() ; i++){
+            if (adjList[i].size() == 0) continue;
+            if (visited[i] == 2) return false;
+            else if (visited[i] == 0)
+                if (hasLoop(adjList, i, visited)) return false;
+        }
+        return true;
+        
+    }
+};
+
+//using topological sort
+According to the Wiki about what Topological sorting is (https://en.wikipedia.org/wiki/Topological_sorting)
+and the Kahn's algorithm as shown below:
+alt text
+L ← Empty list that will contain the sorted elements
+S ← Set of all nodes with no incoming edges
+while S is non-empty do
+
+remove a node n from S
+add n to tail of L
+for each node m with an edge e from n to m do
+remove edge e from the graph
+if m has no other incoming edges then
+insert m into S
+if graph has edges then
+return error (graph has at least one cycle)
+else
+return L (a topologically sorted order)
+I finally understood your solutions. Here is my code:
+public boolean canFinish(int numCourses, int[][] prerequisites) {
+    int[][] matrix = new int[numCourses][numCourses]; // i -> j
+    int[] indegree = new int[numCourses];
+    
+    for (int i=0; i<prerequisites.length; i++) {
+        int ready = prerequisites[i][0];
+        int pre = prerequisites[i][1];
+        if (matrix[pre][ready] == 0)
+            indegree[ready]++; //duplicate case
+        matrix[pre][ready] = 1;
+    }
+    
+    int count = 0;
+    Queue<Integer> queue = new LinkedList();
+    for (int i=0; i<indegree.length; i++) {
+        if (indegree[i] == 0) queue.offer(i);
+    }
+    while (!queue.isEmpty()) {
+        int course = queue.poll();
+        count++;
+        for (int i=0; i<numCourses; i++) {
+            if (matrix[course][i] != 0) {
+                if (--indegree[i] == 0)
+                    queue.offer(i);
+            }
+        }
+    }
+    return count == numCourses;
+}

@@ -1,0 +1,40 @@
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        vector<int> ans;
+        
+        int dx[4] = {0,1,0,-1};
+        int dy[4] = {1,0,-1,0};
+        
+        int dDirection = 0, x = 0, y = 0, rotationNo = 0, eleNo = 0;
+        
+        for (int i = 0 ; i < matrix.size() * matrix[0].size() ; i++){
+            //cout << x << " " << y << endl;
+            ans.push_back(matrix[x][y]);
+            eleNo += 1;
+            x += dx[dDirection];
+            y += dy[dDirection];
+            
+            if (x == rotationNo && y == rotationNo){
+                eleNo = 0;
+                rotationNo += 1;
+                
+                x = rotationNo;
+                y = rotationNo;
+                dDirection = 0;
+            }
+            else if (x+rotationNo >= matrix.size() || y+rotationNo >= matrix[0].size() || x-rotationNo < 0 || y-rotationNo < 0){
+                x -= dx[dDirection];
+                y -= dy[dDirection];
+                
+                dDirection = (dDirection + 1) % 4;
+                
+                x += dx[dDirection];
+                y += dy[dDirection];
+            }
+            
+            
+        }
+        return ans;
+    }
+};

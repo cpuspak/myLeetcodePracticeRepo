@@ -1,0 +1,37 @@
+class Solution {
+public:
+    
+    void backtrack(int& n, int curLeftParenthesis, int curRightParenthesis, string s, vector<string>& ans){
+        if (s.length() == 2*n){
+            ans.push_back(s);
+        } else {
+            if (curLeftParenthesis < n && curRightParenthesis < n){
+                if (curLeftParenthesis <= curRightParenthesis){
+                    s.push_back('(');
+                    backtrack(n,curLeftParenthesis+1, curRightParenthesis, s, ans);
+                    s.pop_back();
+                } else {
+                    s.push_back('(');
+                    backtrack(n,curLeftParenthesis+1, curRightParenthesis, s, ans);
+                    s.pop_back();
+                    s.push_back(')');
+                    backtrack(n,curLeftParenthesis, curRightParenthesis+1, s, ans);
+                    s.pop_back();
+                }
+            } else if (curLeftParenthesis == n){
+                s.push_back(')');
+                backtrack(n,curLeftParenthesis, curRightParenthesis+1, s, ans);
+                s.pop_back();
+            }
+            
+        }
+    }
+    
+    vector<string> generateParenthesis(int n) {
+        vector<string> ans;
+        string s = "";
+        int curLeftParenthesis = 0, curRightParenthesis = 0;
+        backtrack(n, curLeftParenthesis, curRightParenthesis, s, ans);
+        return ans;
+    }
+};

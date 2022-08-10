@@ -1,0 +1,86 @@
+//topological sort and queue soln
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        queue<int> zeroIncEdgQ;
+        vector<int> incomingEdges(numCourses, 0);
+        vector<vector<int>> adjList(numCourses);
+        
+        for(int i = 0 ; i < prerequisites.size() ; i++){
+            incomingEdges[prerequisites[i][0]]++;
+            adjList[prerequisites[i][1]].push_back(prerequisites[i][0]);
+        }
+        
+        for (int i = 0 ; i < numCourses ; i++){
+            if (incomingEdges[i] == 0) zeroIncEdgQ.push(i);
+        }
+        int noOfEdges = 0;
+        vector<int> ans;
+        
+        while(!zeroIncEdgQ.empty()){
+            int node = zeroIncEdgQ.front();
+            ans.push_back(node);
+            zeroIncEdgQ.pop();
+            for(int i = 0 ; i < adjList[node].size() ; i++){
+                if (incomingEdges[adjList[node][i]]) {
+                    incomingEdges[adjList[node][i]]--;
+                    noOfEdges++;
+                    if (incomingEdges[adjList[node][i]] == 0) zeroIncEdgQ.push(adjList[node][i]);
+                }
+            }
+        }
+        if (noOfEdges == prerequisites.size()) return ans;
+        ans.resize(0);
+        return ans;
+    }
+};
+
+//dfs and stack soln that I previously came up with 
+class Solution {
+public:
+    const int visited = 2, visiting = 1, notVisited = 0;
+
+    void dfs(int cur, stack<int> &orderStack, vector<int> &status, vector<vector<int>> &adjList, int &cyclePresent){
+        if (cyclePresent == 1) return;
+        if (status[cur] == notVisited){
+            status[cur] = visiting;
+            for(auto it = adjList[cur].begin() ; it != adjList[cur].end() ; it++){
+                dfs(*it, orderStack, status, adjList, cyclePresent);
+            }
+            status[cur] = visited;
+            orderStack.push(cur);
+        } else if (status[cur] == visiting){
+            cyclePresent = 1;
+        }
+    }
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> adjList(numCourses);
+        for(auto it = prerequisites.begin() ; it != prerequisites.end() ; it++){
+            adjList[(*it)[1]].push_back((*it)[0]);
+        }
+        /*
+        for(auto it = adjList.begin() ; it != adjList.end() ; it++){
+            for (auto it1 = (*it).begin() ; it1 != (*it).end() ; it1++){
+                cout << *(it1) << " ";
+            }
+            cout << endl;
+        }
+        */
+        stack<int> orderStack;
+        vector<int> status(numCourses, 0);
+        int cyclePresent = 0;
+        for(int i = 0 ; i < numCourses ; i++)
+            dfs(i,orderStack,status,adjList,cyclePresent);
+
+        vector<int> result;
+        if (cyclePresent == 1) {
+            return vector<int>();
+        }
+        while(!orderStack.empty()){
+            result.push_back(orderStack.top());
+            orderStack.pop();
+        }
+        return result;
+    }
+
+};

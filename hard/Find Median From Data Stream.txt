@@ -1,0 +1,50 @@
+class MedianFinder {
+public:
+    struct comperatorGreater {
+        bool operator()(int a, int b) {
+            return a > b;
+        }
+    };
+    
+    struct comperatorLesser {
+        bool operator()(int a, int b) {
+            return a < b;
+        }
+    };
+    
+    priority_queue<int, vector<int>, comperatorGreater> pqOfLesserElems;
+    priority_queue<int, vector<int>, comperatorLesser> pqOfGreaterElems;
+    bool same = true;
+    
+    
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        
+        if (same){
+            pqOfGreaterElems.push(num);
+            pqOfLesserElems.push(pqOfGreaterElems.top());
+            pqOfGreaterElems.pop();
+        } else {
+            pqOfLesserElems.push(num);
+            pqOfGreaterElems.push(pqOfLesserElems.top());
+            pqOfLesserElems.pop();
+            
+        }
+        same = !same;
+    }
+    
+    double findMedian() {
+        if (pqOfLesserElems.size() == pqOfGreaterElems.size()) return (pqOfLesserElems.top() + pqOfGreaterElems.top())/2.0;
+        else return pqOfLesserElems.top();
+    }
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder* obj = new MedianFinder();
+ * obj->addNum(num);
+ * double param_2 = obj->findMedian();
+ */

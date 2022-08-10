@@ -1,0 +1,62 @@
+class Solution {
+public:
+    
+    bool isValid(int x, int y, int maxX, int maxY){
+        if (x >= maxX || x < 0 || y >= maxY || y < 0) return false;
+        return true;
+    }
+    
+    void dfs(int y, int x, vector<vector<int>>& oceanReach, vector<vector<int>> heights, vector<vector<int>>& visited){
+        vector<int> xDiff = {-1, 0, 1, 0};
+        vector<int> yDiff = {0, -1, 0, 1};
+        visited[y][x] = 1;
+        oceanReach[y][x] = 1;
+        for (int i = 0 ; i < 4 ; i++){
+            int newX = x + xDiff[i];
+            int newY = y + yDiff[i];
+            if (isValid(newX,newY,heights[0].size(),heights.size()) 
+                && visited[newY][newX] == 0
+                && heights[newY][newX] >= heights[y][x]){
+                dfs(newY, newX, oceanReach, heights, visited);
+            }
+        }
+    }
+    
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
+        vector<vector<int>> pacificReach(heights.size(), vector<int>(heights[0].size(), 0));
+        vector<vector<int>> atlanticReach(heights.size(), vector<int>(heights[0].size(), 0));
+        vector<vector<int>> visited(heights.size(), vector<int>(heights[0].size(), 0));
+        
+        for (int i = 0 ; i < heights.size() ; i++){
+            dfs(i, 0, pacificReach, heights, visited);
+            
+        }
+        for (int i = 0 ; i < heights[0].size() ; i++){
+            dfs(0, i, pacificReach, heights, visited);
+        }
+        for (auto &v: visited) {
+            std::fill(v.begin(), v.end(), 0);
+        }
+        for (int i = 0 ; i < heights.size() ; i++){
+            dfs(i, heights[0].size() - 1, atlanticReach, heights, visited);
+            
+        }
+        for (int i = 0 ; i < heights[0].size() ; i++){
+            dfs(heights.size() - 1, i, atlanticReach, heights, visited);
+        }
+        vector<vector<int>> ans;
+        
+        for (int i = 0 ; i < heights.size() ; i++){
+            for (int j = 0 ; j < heights[0].size() ; j++){
+                if (pacificReach[i][j] && atlanticReach[i][j]){
+                    vector<int> temp;
+                    temp.push_back(i);
+                    temp.push_back(j);
+                    ans.push_back(temp);
+                }
+            }
+        }
+        return ans;
+        
+    }
+};

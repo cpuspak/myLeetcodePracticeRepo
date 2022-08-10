@@ -1,0 +1,13 @@
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int tillNowMax = prices[prices.size() - 1];
+        int tillNowGreatestDiff = 0;
+        for (int i = prices.size() - 1; i >= 0; i--){
+            if (tillNowMax - prices[i] > tillNowGreatestDiff) 
+                tillNowGreatestDiff = tillNowMax - prices[i];
+            if (tillNowMax < prices[i]) tillNowMax = prices[i];
+        }
+        return tillNowGreatestDiff;
+    }
+};

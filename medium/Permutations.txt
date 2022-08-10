@@ -1,0 +1,67 @@
+//soln using swap
+class Solution {
+public:
+    vector<vector<int> > permute(vector<int> &num) {
+	    vector<vector<int> > result;
+	    
+	    permuteRecursive(num, 0, result);
+	    return result;
+    }
+    
+    // permute num[begin..end]
+    // invariant: num[0..begin-1] have been fixed/permuted
+	void permuteRecursive(vector<int> &num, int begin, vector<vector<int> > &result)	{
+		if (begin >= num.size()) {
+		    // one permutation instance
+		    result.push_back(num);
+		    return;
+		}
+		
+		for (int i = begin; i < num.size(); i++) {
+		    swap(num[begin], num[i]);
+		    permuteRecursive(num, begin + 1, result);
+		    // reset
+		    swap(num[begin], num[i]);
+		}
+    }
+};
+
+//soln by dfs
+class Solution {
+private:
+    vector<vector<int>> ans;
+    int m;
+public:
+    void addPermutation(vector<int> currArr, vector<int> nums, int index){
+//         cout << index << " " << nums[index] << endl;
+        
+//         for (int n:currArr) cout << n << " ";
+//         cout << endl;
+//         cout << "======================" << endl;
+        if (currArr.size() == m){
+            if (ans.size() > 0 && ans[ans.size() - 1] != currArr)
+                ans.push_back(currArr);
+            else if (ans.size() == 0) ans.push_back(currArr);
+            return;
+        }
+        if (nums[index] == -99){
+            return;
+        }
+        currArr.push_back(nums[index]);
+        int temp = nums[index];
+        nums[index] = -99;
+        for (int j = 0 ; j < m ; j ++){
+            addPermutation(currArr, nums, j);
+        }
+        //nums[index] = temp;
+        return;
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        m = nums.size();
+        vector<int> currArr;
+        for (int i = 0 ; i < m ; i++){
+            addPermutation(currArr, nums, i);
+        }
+        return ans;
+    }
+};

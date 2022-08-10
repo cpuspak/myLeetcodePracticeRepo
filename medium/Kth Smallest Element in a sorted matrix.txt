@@ -1,0 +1,83 @@
+//heap soln (NOT constant space)
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        priority_queue<element, vector<element>, comperator> pq;
+        unordered_map<int, int> map;
+        int i = 0, j = 0;
+        element firstElement;
+        firstElement.value = matrix[i][j];
+        firstElement.i = i;
+        firstElement.j = j;
+        pq.push(firstElement);
+        map[(firstElement.i)*matrix[0].size() + firstElement.j] = 1;
+        element ans;
+        while(k > 0){
+            int tempI = pq.top().i;
+            int tempJ = pq.top().j;
+            //cout << k << endl;
+            //cout << (tempI + 1 < matrix.size() && k > 0);
+            if (tempI + 1 < matrix.size() && 
+               map.find((tempI+1)*matrix[0].size() + tempJ) == map.end() && k > 0){
+                map[(tempI+1)*matrix[0].size() + tempJ] = 1;
+                element ele;
+                ele.i = tempI + 1;
+                ele.j = tempJ;
+                ele.value = matrix[tempI + 1][tempJ];
+                pq.push(ele);
+                cout << "inserting " << tempI+1 << " " << tempJ << " " << ele.value << endl;
+            }
+            if (tempJ + 1 < matrix[0].size() && 
+               map.find((tempI)*matrix[0].size() + tempJ+1) == map.end() && k > 0){
+                map[(tempI)*matrix[0].size() + tempJ+1] = 1;
+                element ele;
+                ele.i = tempI;
+                ele.j = tempJ + 1;
+                ele.value = matrix[tempI][tempJ + 1];
+                pq.push(ele);
+                cout << "inserting " << ele.value << endl;
+            }
+            ans = pq.top();
+            //cout << ans.value << " " << k << endl;
+            pq.pop();
+            k--;
+            
+        }
+        return ans.value;
+        
+    }
+    
+    typedef struct element{
+        int value,i,j;
+    } element;
+    
+    typedef struct comperator{
+        bool operator()(element greaterN, element lesserN){
+            return greaterN.value > lesserN.value;
+        }
+    } comperator;
+};
+
+
+
+//constant space soln (bin search on range instead of index)
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        
+        int lo = matrix[0][0], hi = matrix[matrix.size() - 1][matrix[0].size() - 1] + 1;
+        
+        while(lo < hi){
+            int mid = lo + (hi - lo)/2;
+            int count = 0;
+            for (int i = 0 ; i < matrix.size() ; i++){
+                int j = matrix[0].size() - 1;
+                while(j >= 0 && matrix[i][j] > mid) j--; 
+                count += (j+1);
+            }
+            if (count < k) lo = mid + 1;
+            else hi = mid;
+        }
+        return lo;
+    }
+};

@@ -1,0 +1,61 @@
+class Solution {
+public:
+    
+    
+    void wordBreakUtil(int startFirstString, string s, vector<int>& dpResult, unordered_set<string>& dpSet){
+        for (int i = 1 ; startFirstString + i <= s.length(); i++){
+            //cout << i << endl;
+            if (startFirstString + i == s.length()){
+                //cout << s.substr(startFirstString, i) << i;
+                if (dpSet.find(s.substr(startFirstString, i)) == dpSet.end()){
+                    if (dpResult[startFirstString] != 1) dpResult[startFirstString] = 0;
+                } else {
+                    dpResult[startFirstString] = 1;
+                }
+            } else {
+                //cout << s.substr(startFirstString, i) << endl;
+                //if (dpSet.find(s.substr(0,4)) != dpSet.end()) cout << "found leet" << endl;
+                if (dpSet.find(s.substr(startFirstString, i)) != dpSet.end()
+                    && dpResult[startFirstString + i] == 1) {
+                    dpResult[startFirstString] = 1;
+                    //cout << s.substr(startFirstString, i) << i << endl;
+                    return;
+                } else if (dpSet.find(s.substr(startFirstString, i)) != dpSet.end()
+                    && dpResult[startFirstString + i] == -1){
+                    //cout << s.substr(startFirstString, i) << i << "test" << endl;
+                    wordBreakUtil(startFirstString + i, s, dpResult, dpSet);
+                    //cout << s.substr(startFirstString, i) << startFirstString << i << "test" << startFirstString + i << endl;
+                    if (dpResult[startFirstString + i] == 1) dpResult[startFirstString] = 1;
+                    else if (dpResult[startFirstString] != 1) dpResult[startFirstString] = 0;
+                } else {
+                    //cout << s.substr(startFirstString, i) << endl;
+                    continue;
+                }
+            }
+            
+        }
+    }
+    
+    bool wordBreak(string s, vector<string>& wordDict) {
+        vector<int> dpResult(s.length(), -1);
+        unordered_set<string> dpSet;
+        for (string str: wordDict){
+            dpSet.insert(str);
+        }
+        if (dpSet.find(s) != dpSet.end()) return true;
+        else if (s.length() == 1) return false;
+        for (int i = 1 ; i <= s.length() ; i++){
+            //cout << i << endl;
+            if (dpSet.find(s.substr(s.length() - 1 - (i - 1), i)) != dpSet.end())
+                dpResult[s.length() - 1 - (i - 1)] = 1;
+        }
+        wordBreakUtil(0, s, dpResult, dpSet);
+        // cout << dpResult.size();
+        // for (int n: dpResult) {
+        //     cout << n << " ";
+        // }
+        // cout << endl;
+        return dpResult[0];
+        
+    }
+};

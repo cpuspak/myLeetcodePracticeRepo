@@ -1,0 +1,139 @@
+//trie + dfs soln
+class Solution {
+public:
+    typedef struct Node{
+        Node* children[26] = {NULL};
+        bool isWord = false;
+    } Node;
+    
+    class Trie{
+        public:
+            Node* root;
+            string ans = "";
+            int maxLevelTillNow = 0;
+            Trie(){
+                root = new Node();
+            }
+            void insert(string word){
+                Node* tempNode = root;
+
+                for(char c: word){
+                    if(tempNode->children[c-'a'] == NULL) tempNode->children[c-'a'] = new Node();
+                    tempNode = tempNode->children[c-'a'];
+                }
+                tempNode->isWord = true;
+            }
+            bool isWord(string word){
+                Node* tempNode = root;
+                for(char c: word){
+                    if(tempNode->children[c-'a'] == NULL) return false;
+                    tempNode = tempNode->children[c-'a'];
+                }
+                return tempNode->isWord;
+            }
+            
+            void dfsUtil(int i,int level, string s, Node* tempNode){
+                //cout << s << " " << endl;
+                if(tempNode->children[i] != NULL && tempNode->children[i]->isWord){
+                    s += ('a'+i);
+                    tempNode = tempNode->children[i];
+                    for(int i = 0 ; i < 26 ; i++){
+                        dfsUtil(i, level+1,s, tempNode);
+                    }
+                } else {
+                    if(level > maxLevelTillNow){
+                        maxLevelTillNow = level;
+                        ans = s;
+                    }
+                }
+            }
+            void dfs(){
+                for (int i = 0 ; i < 26 ; i++){
+                    string s = "";
+                    dfsUtil(i, 0, s, root);
+                }
+            }
+        
+    };
+    
+    
+    string longestWord(vector<string>& words) {
+        sort(words.begin(),words.end());
+        Trie t;
+        string ans = "";
+        for(string word: words) t.insert(word);
+        
+        t.dfs();
+        
+        return t.ans;
+    }
+};
+
+//trie + sort soln
+class Solution {
+public:
+    typedef struct Node{
+        Node* children[26] = {NULL};
+        bool isWord = false;
+    } Node;
+    
+    class Trie{
+        public:
+
+            Node* root;
+
+            Trie(){
+                root = new Node();
+            }
+
+            void insert(string word){
+                Node* tempNode = root;
+
+                for(char c: word){
+                    if(tempNode->children[c-'a'] == NULL) tempNode->children[c-'a'] = new Node();
+                    tempNode = tempNode->children[c-'a'];
+                }
+                tempNode->isWord = true;
+            }
+
+            bool isWord(string word){
+                Node* tempNode = root;
+
+                for(char c: word){
+                    if(tempNode->children[c-'a'] == NULL) return false;
+                    tempNode = tempNode->children[c-'a'];
+                }
+                return tempNode->isWord;
+            }
+    };
+    
+    // bool compStr(string s1, string s2){
+    //     for(int i = 0 ; i < s1.length() ; i++){
+    //         if (s1.at(i) > s2.at(i)) return false;
+    //     } 
+    //     return true;
+    // }
+    
+    string longestWord(vector<string>& words) {
+        sort(words.begin(),words.end());
+        Trie t;
+        string ans = "";
+        for(string word: words) t.insert(word);
+        
+        for(string word: words){
+            bool isPossibleAns = true;
+            for(int i = 1 ; i <= word.size() ; i++){
+                string temp = word.substr(0,i);
+                if(!t.isWord(temp)) {
+                    isPossibleAns = false;
+                    break;
+                }
+            }
+            // if(isPossibleAns && ((word.length() > ans.length()) || (word.length() == ans.length() && compStr(word,ans)))){
+            if(isPossibleAns && ((word.length() > ans.length()))){
+                ans = word;
+            }
+        }
+        return ans;
+    }
+};

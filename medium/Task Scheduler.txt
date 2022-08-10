@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) {
+        
+        int freqArr[26] = {0};
+        int maxFreq = 0;
+        for (int i = 0 ; i < tasks.size() ; i++) {
+            freqArr[tasks[i] - 'A']++;
+            if (freqArr[tasks[i] - 'A'] > maxFreq) maxFreq = freqArr[tasks[i] - 'A'];
+        }
+        
+        int elesWithMaxFreq = 0;
+        
+        for (int i = 0 ; i < 26 ; i++){
+            if (freqArr[i] == maxFreq) elesWithMaxFreq++;
+        }
+        if (elesWithMaxFreq > n) return tasks.size();
+        else n -= (elesWithMaxFreq-1);
+        int noOfSegments = maxFreq - 1;
+        int noOfSpaces = noOfSegments*n;
+        int totalCpuCycleByElesWithFreqLessThanMax = tasks.size()-(elesWithMaxFreq*maxFreq);
+        int spacesReqd = max(0,noOfSpaces-totalCpuCycleByElesWithFreqLessThanMax);
+        
+        return tasks.size() + spacesReqd;
+        
+        
+    }
+};

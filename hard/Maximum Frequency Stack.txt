@@ -1,0 +1,82 @@
+//heap soln
+class FreqStack {
+public:
+     struct compare {
+        inline bool operator()(vector<int> num1, vector<int> num2) {
+            if (num1[1] == num2[1]) return num1[0] < num2[0];
+            return num1[1] < num2[1];
+        }
+    };
+    
+    unordered_map<int, int> freqMap;
+    unordered_map<int, int> posMap;
+    int maxPos = 0;
+    priority_queue<vector<int>, vector<vector<int>>, compare> pq;
+    FreqStack() {
+        
+    }
+    
+    void push(int val) {
+        if (freqMap.find(val) == freqMap.end()) freqMap[val] = 1;
+        else freqMap[val]++;
+        vector<int> temp = {maxPos, freqMap[val], val};
+        maxPos++;
+        pq.push(temp);
+    }
+    
+    int pop() {
+        vector<int> temp = pq.top();
+        pq.pop();
+        //cout << "maxPos = " << temp[0] << " freq = " << temp[1] << " " << " val = " << temp[2] << endl;
+        freqMap[temp[2]]--;
+        return temp[2];
+    }
+    
+   
+};
+
+/**
+ * Your FreqStack object will be instantiated and called as such:
+ * FreqStack* obj = new FreqStack();
+ * obj->push(val);
+ * int param_2 = obj->pop();
+ */
+
+
+//big brain map of stacks soln
+class FreqStack {
+public:
+    unordered_map<int, int> freqMap;
+    unordered_map<int, stack<int>> mapOfStacks;
+    int maxFreq = 0;
+    
+    FreqStack() {
+        
+    }
+    
+    void push(int val) {
+        freqMap[val]++;
+        maxFreq = max(maxFreq, freqMap[val]);
+        mapOfStacks[freqMap[val]].push(val);
+    }
+    
+    int pop() {
+        //cout << maxFreq << endl;
+        int returnEle = mapOfStacks[maxFreq].top();
+        if (mapOfStacks[maxFreq].size() == 1){
+            mapOfStacks[maxFreq].pop();
+            maxFreq--;
+        } else mapOfStacks[maxFreq].pop();
+        freqMap[returnEle]--;
+        return returnEle;
+    }
+    
+   
+};
+
+/**
+ * Your FreqStack object will be instantiated and called as such:
+ * FreqStack* obj = new FreqStack();
+ * obj->push(val);
+ * int param_2 = obj->pop();
+ */

@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int maxSumTillNow = *max_element(nums.begin(), nums.end());
+        int minValue = *min_element(nums.begin(), nums.end());
+        int i = 0;
+        int sumTillNow = 0;
+        if (maxSumTillNow < 0) return maxSumTillNow;
+        if (minValue >= 0) return accumulate(nums.begin(), nums.end(), 0);
+        while(i < nums.size()){
+            if (sumTillNow + nums[i] > 0){
+                if (sumTillNow + nums[i] > maxSumTillNow)
+                    maxSumTillNow = sumTillNow + nums[i];
+                sumTillNow += nums[i];
+            } else if (nums[i] > 0) sumTillNow = nums[i];
+            else sumTillNow = 0;
+            
+            i++;
+        }
+        return maxSumTillNow;
+    }
+};

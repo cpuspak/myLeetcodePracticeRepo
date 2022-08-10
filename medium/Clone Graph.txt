@@ -1,0 +1,62 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+    Node() {
+        val = 0;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val) {
+        val = _val;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+
+class Solution {
+public:
+    
+    //unordered_map<int, int> visitMap;
+    unordered_map<int, Node*> nodeMap;
+    
+    void dfs(Node* curNewNode, Node* curNode){
+        //visitMap[curNode->val] = 1;
+        vector<Node*> neighborsVector = curNode->neighbors;
+        vector<Node*> newNeighborsVector;
+        for(int i = 0 ; i < neighborsVector.size() ; i++){
+            
+            if(nodeMap.find(neighborsVector[i]->val) == nodeMap.end()){
+                Node* tempNode = new Node(neighborsVector[i]->val);
+                nodeMap[tempNode->val] = tempNode;
+                newNeighborsVector.push_back(tempNode);
+                dfs(tempNode, neighborsVector[i]);
+                
+            } else {
+                newNeighborsVector.push_back(nodeMap[neighborsVector[i]->val]);
+            }
+        }
+        curNewNode->neighbors = newNeighborsVector;
+        // cout << curNewNode->val<< endl;
+        // for(Node* node: newNeighborsVector) cout << node->val << " ";
+        // cout << endl;
+    }
+    
+    Node* cloneGraph(Node* node) {
+        if(!node) {
+            return NULL;
+        }
+        Node* newRoot = new Node(node->val);
+        //visitMap[node->val] = 1;
+        nodeMap[node->val] = newRoot;
+        dfs(newRoot, node);
+        // for(Node* node: newRoot->neighbors[0]->neighbors[1]->neighbors[1]->neighbors[1]->neighbors) cout << node->val << " " ;
+        // cout << endl;
+        return newRoot;
+    }
+};

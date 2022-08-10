@@ -1,0 +1,37 @@
+class Solution {
+public:
+    
+    unordered_map<char, vector<char>> dict;
+    
+    void backtrack(vector<string>& ans, int begin, string temp, string digits){
+        if (temp.size() == digits.size()){
+            ans.push_back(temp);
+        } else {
+            for (char i : dict[digits[begin]]){
+                temp.push_back(i);
+                backtrack(ans,begin+1,temp,digits);
+                temp.pop_back();
+            }
+        }
+    }
+    
+    vector<string> letterCombinations(string digits) {
+        vector<string> ans;
+        if (digits.size() == 0) return ans;
+        dict['2'] = {'a','b','c'};
+        dict['3'] = {'d','e','f'};
+        dict['4'] = {'g','h','i'};
+        dict['5'] = {'j','k','l'};
+        dict['6'] = {'m','n','o'};
+        dict['7'] = {'p','q','r','s'};
+        dict['8'] = {'t','u','v'};
+        dict['9'] = {'w','x','y','z'};
+        string temp = "";
+        backtrack(ans, 0, temp, digits);
+        
+        
+        return ans;
+        
+        
+    }
+};

@@ -1,0 +1,71 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseLinkedList(ListNode* head){
+        if (head->next == NULL) return head;
+        if (head->next->next == NULL) {
+            ListNode* newHead = head->next;
+            newHead->next = head;
+            head->next = NULL;
+            return newHead;
+        }
+        ListNode* firstPtr = head;
+        ListNode* secondPtr = head->next;
+        ListNode* thirdPtr = head->next->next;
+        while(thirdPtr != NULL){
+            secondPtr->next = firstPtr;
+            if (firstPtr == head) firstPtr->next = NULL;
+            firstPtr = secondPtr;
+            secondPtr = thirdPtr;
+            thirdPtr = thirdPtr->next;
+        }
+        secondPtr->next = firstPtr;
+        return secondPtr;
+        
+    }
+    
+    bool isPalindrome(ListNode* head) {
+        if (head->next == NULL) return true;
+        if (head->next->next == NULL){
+            if (head->val == head->next->val) return true;
+            return false;
+        }
+        ListNode* fastPtr = head;
+        ListNode* slowPtr = head;
+        ListNode* nextListStart;
+        int oddNoOfEles = 0;
+        
+        while(fastPtr->next != NULL && fastPtr->next->next != NULL){
+            fastPtr = fastPtr->next->next;
+            slowPtr = slowPtr->next;
+            if (fastPtr->next == NULL){
+                nextListStart = slowPtr->next;
+                oddNoOfEles = 1;
+                break;
+            }
+            else if (fastPtr->next->next == NULL){
+                nextListStart = slowPtr->next;
+                break;
+            }
+        }
+        ListNode* curHeadStart = head;
+        ListNode* reversedHead = reverseLinkedList(nextListStart);
+        while(reversedHead != NULL){
+            if (reversedHead->val != curHeadStart->val){
+                return false;
+            }
+            reversedHead = reversedHead -> next;
+            curHeadStart = curHeadStart -> next;
+        }
+        return true;
+    }
+};

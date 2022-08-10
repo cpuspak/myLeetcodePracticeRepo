@@ -1,0 +1,39 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    
+    unordered_map<int, int> prefixSumFreqMap;
+    long long int ans = 0;
+    void dfs(TreeNode* root, long long int targetSum, long long int curPreSum){
+        if (!root) return;
+        curPreSum += root->val;
+        long long int result = 0;
+        if (prefixSumFreqMap.find(curPreSum - targetSum) != prefixSumFreqMap.end()){
+            result += prefixSumFreqMap[curPreSum - targetSum];
+        }
+        prefixSumFreqMap.find(curPreSum) == prefixSumFreqMap.end() ? prefixSumFreqMap[curPreSum] = 1 : prefixSumFreqMap[curPreSum]++;
+        dfs(root->left, targetSum, curPreSum);
+        dfs(root->right, targetSum, curPreSum);
+        prefixSumFreqMap[curPreSum]--;
+        ans += result;
+    }
+    
+    long long int pathSum(TreeNode* root, long long int targetSum) {
+        if (!root) return 0;
+        prefixSumFreqMap[0] = 1;
+        dfs(root, targetSum, 0);
+        //cout << prefixSumFreqMap[root->val];
+        return ans;
+        
+    }
+};

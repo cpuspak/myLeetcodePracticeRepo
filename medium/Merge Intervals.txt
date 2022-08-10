@@ -1,0 +1,39 @@
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end(), comparator);
+        
+        int startIndex = 0, endIndex = 1, curEndRange = intervals[0][1];
+        vector<vector<int>> ans;
+        for(int i = 0 ; i < intervals.size() ; i++){
+            //cout << curEndRange << " " << endIndex << endl;
+            if (endIndex >= intervals.size()) {
+                if (endIndex - 1 < intervals.size()){
+                    if (curEndRange >= intervals[endIndex-1][0]){
+                        ans.push_back(vector<int>({intervals[startIndex][0], curEndRange}));
+                    }
+                }
+                break;
+            }
+            if (curEndRange >= intervals[endIndex][0]){
+                curEndRange = max(intervals[endIndex][1], curEndRange);
+                endIndex++;
+            } else {
+                //cout << "here" << endl;
+                ans.push_back(vector<int>({intervals[startIndex][0], curEndRange}));
+                startIndex = endIndex;
+                endIndex++;
+                curEndRange = intervals[startIndex][1];
+            }
+        }
+        
+        
+        return ans;
+    }
+    
+    static bool comparator(vector<int> begin, vector<int> end) {
+        //if (begin[0] == end[0]) return begin[1] < end[1];
+        return begin[0] < end[0];
+    }
+    
+};

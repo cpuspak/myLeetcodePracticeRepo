@@ -1,0 +1,33 @@
+class Solution {
+public:
+    void backtrack(vector<vector<string>>& ans, vector<string> temp, string s, int begin){
+        cout << begin << " " << s.length() << endl;
+        if(begin == s.length()) {
+            ans.push_back(temp);
+            //cout << "pushing temp" << temp.size() << endl;
+        }
+        else {
+            for (int i = begin+1; i <= s.length() ; i++){
+                if(isPalindrome(s.substr(begin, i-begin))){
+                    cout << s.substr(begin, i-begin) << " " << begin << endl;
+                    temp.push_back(s.substr(begin, i-begin));
+                    backtrack(ans, temp, s, i);
+                    temp.pop_back();
+                }
+            }
+        }
+    }
+    bool isPalindrome(string s){
+        int len = s.length() - 1;
+        for(int i = 0 ; i < (int)(s.length() / 2) ; i++){
+            if (s.at(i) != s.at(len - i)) return false;
+        }
+        return true;
+    }
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> ans;
+        vector<string> temp;
+        backtrack(ans, temp, s, 0);
+        return ans;
+    }
+};

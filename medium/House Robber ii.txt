@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        if (nums.size() == 1) return nums[0];
+        else if (nums.size() == 2) return max(nums[0], nums[1]);
+        else {
+            int newValue, oldValue, temp, max1, max2;
+            newValue = nums[0];
+            oldValue = 0;
+            for (int i = 1 ; i < nums.size() - 1 ; i++){
+                temp = newValue;
+                newValue = max(newValue, oldValue + nums[i]);
+                oldValue = temp;
+            }
+            max1 = newValue;
+            newValue = nums[1];
+            oldValue = 0;
+            for (int i = 2 ; i < nums.size() ; i++){
+                temp = newValue;
+                newValue = max(newValue, oldValue + nums[i]);
+                oldValue = temp;
+            }
+            max2 = newValue;
+            return max(max1, max2);
+        }
+    }
+};

@@ -1,0 +1,59 @@
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        if (s == t) return t;
+        if (s.length() < t.length()) return "";
+        if (s.length() == 1 && t.length() == 1) return "";
+        
+        int totalMinLength = t.length(), curMinLength = 0;
+        unordered_map<char, int> tMap;
+        unordered_map<char, int> sMap;
+        
+        for(char c: t){
+            if (tMap.find(c) == tMap.end()) tMap[c] = 1;
+            else tMap[c]++;
+        }
+        
+        int leftCur = 0, rightCur = 0, left = 0;
+        int atLeastOnceFlag = 0;
+        int maxLengthTillNow = s.length() + 1;
+        
+        for(int right = 0 ; right < s.length() ; right++){
+            sMap[s[right]]++;
+            if (tMap.find(s[right]) != tMap.end() && tMap[s[right]] >= sMap[s[right]]){
+                curMinLength++;
+            }
+            //cout << left << " " << right << " " << curMinLength << " " << totalMinLength << endl;
+            if (curMinLength == totalMinLength) {
+                atLeastOnceFlag = 1;
+                //cout << " im here " << endl;
+                if (right - left + 1 < maxLengthTillNow){
+                    //cout << "right" << right << "left" << left << endl;
+                    rightCur = right;
+                    leftCur = left;
+                    maxLengthTillNow = rightCur - leftCur + 1;
+                }
+                while(left < right && curMinLength == totalMinLength){
+                    //cout << left << endl;
+                    sMap[s[left]]--;
+                    if (tMap.find(s[left]) != tMap.end() && tMap[s[left]] > sMap[s[left]]){
+                        curMinLength--;
+                    }
+                    left++;
+                    if (curMinLength == totalMinLength && right - left + 1 < maxLengthTillNow){
+                        //cout << "==" << left << endl;
+                        rightCur = right;
+                        leftCur = left;
+                        maxLengthTillNow = rightCur - leftCur + 1;
+                        //cout << "maxLengthTillNow " << maxLengthTillNow << endl;
+                    }
+                }
+            }
+        }
+        if (atLeastOnceFlag == 0) return "";
+        //cout << leftCur << " " << rightCur << endl;
+        return s.substr(leftCur, rightCur-leftCur+1);
+        
+        
+    }
+};

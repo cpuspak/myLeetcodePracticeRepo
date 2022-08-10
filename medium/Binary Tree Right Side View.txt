@@ -1,0 +1,72 @@
+//dfs soln
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    void dfs(TreeNode* curNode, vector<int> &ans, int level, int &curMaxLevel){
+        if (level <= curMaxLevel) ans[level] = curNode->val;
+        else {
+            curMaxLevel = level;
+            ans.push_back(curNode->val);
+        }
+        if (curNode->left) dfs(curNode->left, ans, level+1, curMaxLevel);
+        if (curNode->right) dfs(curNode->right, ans, level+1, curMaxLevel);
+    }
+    
+    
+    vector<int> rightSideView(TreeNode* root) {
+        vector<int> ans;
+        if (!root) return vector<int>(0);
+        TreeNode* tempRoot = root;
+        int curMaxLevel = -1;
+        dfs(root, ans, 0, curMaxLevel);
+        
+        return ans;
+    }
+};
+
+//level order traversal soln
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    
+    
+    
+    vector<int> rightSideView(TreeNode* root) {
+        vector<int> ans;
+        if (!root) return vector<int>(0);
+        vector<TreeNode*> curTraversing;
+        vector<TreeNode*> nextTraversing;
+        curTraversing.push_back(root);
+        while(!curTraversing.empty()){
+            //cout << curTraversing.size() << endl;
+            ans.push_back(curTraversing[0]->val);
+            for(TreeNode* node: curTraversing){
+                if(node->right) nextTraversing.push_back(node->right);
+                if(node->left) nextTraversing.push_back(node->left);
+            }
+            curTraversing = nextTraversing;
+            nextTraversing.resize(0);
+        }
+        return ans;
+    }
+};

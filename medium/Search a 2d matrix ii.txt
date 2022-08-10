@@ -1,0 +1,44 @@
+//greedy soln
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int row = 0, col = matrix[0].size() - 1;
+        
+        while(row < matrix.size() && col >= 0){
+            if (matrix[row][col] == target) return true;
+            if (matrix[row][col] > target) col --;
+            else row ++;
+        }
+        return false;
+        
+    }
+};
+
+//divide and conquire soln
+
+class Solution {
+public:
+    
+    bool searchMatrixUtil(vector<vector<int>>& matrix, int target, int topLeftRow, int topLeftCol, int bottomRightRow, int bottomRightCol){
+        
+        if (bottomRightCol > matrix[0].size() - 1 || bottomRightCol < 0 || topLeftCol > matrix[0].size() - 1 || topLeftCol < 0 || topLeftCol > bottomRightCol || bottomRightRow > matrix.size() - 1 || bottomRightRow < 0 || topLeftRow > matrix.size() - 1 || topLeftRow < 0 || topLeftRow > bottomRightRow) return false;
+        
+        
+        
+        int midRow = (topLeftRow + bottomRightRow)/2, midCol = (topLeftCol + bottomRightCol)/2;
+        //cout << topLeftRow << " " << topLeftCol << " " << midRow << " " << midCol << " " << bottomRightRow << " " << bottomRightCol << endl;
+        if (topLeftRow == bottomRightRow && topLeftCol == bottomRightCol) return target == matrix[midRow][midCol];
+        if (matrix[midRow][midCol] == target) return true;
+        else if (matrix[midRow][midCol] > target){
+            return searchMatrixUtil(matrix, target, topLeftRow, topLeftCol, midRow-1, midCol) || searchMatrixUtil(matrix, target, midRow, topLeftCol, bottomRightRow,midCol-1) || searchMatrixUtil(matrix, target, topLeftRow,midCol+1,midRow-1,bottomRightCol);
+        } else {
+            return searchMatrixUtil(matrix, target, midRow+1, midCol, bottomRightRow, bottomRightCol) || searchMatrixUtil(matrix, target, topLeftRow, midCol+1, midRow,bottomRightCol) || searchMatrixUtil(matrix, target, midRow+1,topLeftCol,bottomRightRow,midCol-1);
+        }
+    }
+    
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        if (target < matrix[0][0] || target > matrix[matrix.size() - 1][matrix[0].size() - 1]) return false;
+        return searchMatrixUtil(matrix, target, 0, 0, matrix.size() - 1, matrix[0].size() - 1);
+        
+    }
+};

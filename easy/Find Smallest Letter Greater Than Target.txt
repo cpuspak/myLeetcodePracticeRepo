@@ -1,0 +1,27 @@
+class Solution {
+public:
+    char nextGreatestLetter(vector<char>& letters, char target) {
+        if (target >= letters[letters.size() - 1] || target < letters[0]) return letters[0];
+        int min = 0;
+        int max = letters.size() - 1;
+        int mid = ((min+max)/2);
+        
+        while(min >= 0 && max < letters.size() && min < max){
+            if (mid > 0){
+                if (letters[mid] > target && letters[mid-1] <= target) return letters[mid];
+                else if (letters[mid] > target && letters[mid-1] > target){
+                    max = mid-1;
+                    mid = (min + max)/2;
+                } else if (letters[mid] <= target) {
+                    min = mid+1;
+                    mid = (min + max)/2;
+                }
+            } else {
+                if (letters[mid] <= target) return letters[mid+1];
+                return letters[mid];
+            }
+        }
+        return letters[mid];
+        
+    }
+};

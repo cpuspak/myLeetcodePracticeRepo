@@ -1,0 +1,34 @@
+//trick solution
+public int[][] construct2DArray(int[] original, int m, int n) {
+	if(original.length != m*n) return new int[0][0];
+	int[][] result = new int[m][n];
+	for(int i=0;i<original.length;i++)
+		result[i/n][i%n] = original[i];
+	return result;
+}
+//my soln
+class Solution {
+public:
+    vector<vector<int>> construct2DArray(vector<int>& original, int m, int n) {
+        vector<vector<int>> twoDArray;
+        if ((m*n != original.size())) return twoDArray;
+        int curIndexRow = 0;
+        int curIndexCol = 0;
+        
+        for (int i = 0 ; i < original.size() ; i++){
+            if (curIndexCol == 0){
+                vector<int> tempRow;
+                twoDArray.push_back(tempRow);
+            }
+            twoDArray[curIndexRow].push_back(original[i]);
+            if (curIndexCol == n - 1) {
+                curIndexCol = 0;
+                curIndexRow++;
+            }
+            else curIndexCol++;
+            
+            if (curIndexRow == m) break;
+        }
+        return twoDArray;
+    }
+};

@@ -1,0 +1,63 @@
+class Solution {
+public:
+    
+    
+    vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+        priority_queue<heapEle, vector<heapEle>, comparator> pq;
+        vector<vector<int>> ans;
+        int inums1 = 0, inums2 = 0;
+        vector<int> temp = {0,0};
+        unordered_map<int, int> visitedMap;
+        int visCount = 1;
+        int maxCount = k < (nums1.size() * nums2.size()) ? k : (nums1.size() * nums2.size());
+        //vector<vector<int>> visited(nums1.size(), vector<int>(nums2.size(), 0));
+        
+        int numsTwoSize = nums2.size();
+        heapEle tempStruct;
+        visitedMap[numsTwoSize*0 + 0] = 1;
+        
+        tempStruct.inums1 = 0;
+        tempStruct.inums2 = 0;
+        tempStruct.sum = nums1[0] + nums2[0];
+        pq.push(tempStruct);
+        
+        while(ans.size() < maxCount && pq.size() > 0){
+            inums1 = pq.top().inums1;
+            inums2 = pq.top().inums2;
+            //cout << inums1 << " " << inums2 << endl;
+            temp[0] = nums1[inums1];
+            temp[1] = nums2[inums2];
+            ans.push_back(temp);
+            pq.pop();
+            
+            if (inums1 + 1 < nums1.size()
+                && visitedMap.find(numsTwoSize*(inums1+1) + inums2) == visitedMap.end()){
+                tempStruct.inums1 = inums1+1;
+                tempStruct.inums2 = inums2;
+                tempStruct.sum = nums1[tempStruct.inums1] + nums2[tempStruct.inums2];
+                visitedMap[numsTwoSize*(inums1+1) + inums2] = 1;
+                pq.push(tempStruct);
+            }
+            if (inums2 + 1 < nums2.size()
+                && visitedMap.find(numsTwoSize*inums1 + (inums2+1)) == visitedMap.end()){
+                tempStruct.inums1 = inums1;
+                tempStruct.inums2 = inums2+1;
+                tempStruct.sum = nums1[tempStruct.inums1] + nums2[tempStruct.inums2];
+                visitedMap[numsTwoSize*inums1 + (inums2+1)] = 1;
+                pq.push(tempStruct);
+            }
+        }
+        return ans;
+        
+    }
+    
+    typedef struct heapEle {
+        int inums1, inums2, sum;
+    } heapEle;
+    
+    typedef struct comparator {
+        bool operator()(heapEle pairStruct1, heapEle pairStruct2){
+            return (pairStruct1.sum) > (pairStruct2.sum);
+        }
+    } comparator;
+};

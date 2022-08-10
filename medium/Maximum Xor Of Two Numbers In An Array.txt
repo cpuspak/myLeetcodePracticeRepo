@@ -1,0 +1,67 @@
+class Solution {
+public:
+    
+    typedef struct Node {
+        Node *children[2] = {NULL};
+    } Node;
+    
+    class Trie {
+        public:
+        Node *root;
+        Trie(){
+            root = new Node();
+        }
+        
+        void insert(int num, int mask){ //mask is the no of bits used in max number
+            Node* tempRoot = root;
+            for(int i = mask-1 ; i >= 0 ; i--){
+                int insertBit = (num & (1 << i)) >> i;
+                //cout << i << " " << num << " " <<insertBit << endl;
+                if (tempRoot->children[insertBit] == NULL) tempRoot->children[insertBit] = new Node();
+                tempRoot = tempRoot->children[insertBit];
+            }
+        }
+        
+        int dfsClosestNum(int num, int mask){
+            Node* tempRoot = root;
+            int revNum = 0;
+            //cout << "mask" << mask << " " << num << endl;
+            for(int i = mask-1 ; i >= 0 ; i--){
+                int reversedBit = ((num & (1 << i)) >> i) ^ 1;
+                //cout << reversedBit << " " << num << " " << i << endl;
+                if (tempRoot->children[reversedBit] != NULL) {
+                    tempRoot = tempRoot->children[reversedBit];
+                    revNum += (reversedBit << i);
+                } else {
+                    tempRoot = tempRoot->children[(reversedBit ^ 1)];
+                    revNum += ((reversedBit^1) << i);
+                }
+            }
+            return revNum;
+        }
+    };
+    
+    int findMaximumXOR(vector<int>& nums) {
+        int m1 = 0, m2 = 0;
+        int max = 0;
+        int maxNum = *max_element(nums.begin(), nums.end());
+        int maxBits = 0;
+        while(maxNum != 0){
+            maxNum /= 2;
+            maxBits++;
+        }
+        Trie t;
+        for(int num: nums){
+            t.insert(num, maxBits);
+        }
+        int maxXor = 0;
+        for(int num: nums){
+            int closestNum = t.dfsClosestNum(num, maxBits);
+            //cout << num << " " << closestNum << endl;
+            int tempXor = num ^ closestNum;
+            if (tempXor > maxXor) maxXor = tempXor;
+        }
+        
+        return maxXor;
+    }
+};
