@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
+        vector<int> map(fruits.size()+1, 0);
+        pair<int, int> elems;
+        elems.first = fruits[0];
+        elems.second = -1;
+        int curAns = 1, maxAns = 1;
+        
+        map[fruits[0]]++;
+        int left = 0;
+        for(int i = 1 ; i < fruits.size() ; i++){
+            if (fruits[i] == elems.first || fruits[i] == elems.second){
+                map[fruits[i]]++;
+                curAns = i - left + 1;
+                if (maxAns < curAns) maxAns = curAns;
+            } else if(elems.second == -1){
+                elems.second = fruits[i];
+                map[fruits[i]]++;
+                curAns = i - left + 1;
+                if (maxAns < curAns) maxAns = curAns;
+            } else if(elems.first == -1){
+                elems.first = fruits[i];
+                map[fruits[i]]++;
+                curAns = i - left + 1;
+                if (maxAns < curAns) maxAns = curAns;
+            }
+            else {
+                while(map[elems.first] > 0 && map[elems.second] > 0){
+                    map[fruits[left]]--;
+                    left++;
+                    curAns--;
+                }
+                if (map[elems.first] == 0) elems.first = fruits[i];
+                else elems.second = fruits[i];
+                curAns = i - left + 1;
+                map[fruits[i]]++;
+                
+            }
+            // cout << curAns << " " << i << " " << elems.first << " " << elems.second << endl;
+        }
+        // cout << curAns << " " << maxAns;
+        return max(maxAns,curAns);
+    }
+};

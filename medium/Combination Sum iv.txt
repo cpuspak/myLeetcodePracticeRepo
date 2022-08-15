@@ -1,0 +1,53 @@
+class Solution {
+public:
+    
+    unordered_map<int, int> memo;
+    
+    int backTrack(int target, vector<int>& nums){
+        if (memo.find(target) != memo.end()) return memo[target];
+        
+        int ans = 0;
+        for(int i = 0 ; i < nums.size() ; i++){
+            if (target - nums[i] >= 0)
+                ans += backTrack(target - nums[i], nums);
+        }
+        
+        memo[target] = ans;
+        return ans;
+        
+    }
+    
+    int combinationSum4(vector<int>& nums, int target) {
+        memo[0] = 1;
+        return backTrack(target, nums);
+    }
+};
+
+//In order to allow negative integers, the length of the combination sum needs to be restricted, or the search will not stop. This is a modification from my previous solution, which also use memory to avoid repeated calculations.
+
+Map<Integer, Map<Integer,Integer>> map2 = new HashMap<>();
+    private int helper2(int[] nums, int len, int target, int MaxLen) {
+    	int count = 0;
+        if (  len > MaxLen  ) return 0;
+        if ( map2.containsKey(target) && map2.get(target).containsKey(len)) { 
+        	return map2.get(target).get(len);
+        }
+        if ( target == 0 )   count++;
+        for (int num: nums) {
+            count+= helper2(nums, len+1, target-num, MaxLen);
+        }
+        if ( ! map2.containsKey(target) ) map2.put(target, new HashMap<Integer,Integer>());
+        Map<Integer,Integer> mem = map2.get(target);
+        mem.put(len, count);
+        return count;
+    }
+       
+    public int combinationSum42(int[] nums, int target, int MaxLen) {
+        if (nums == null || nums.length ==0 || MaxLen <= 0 ) return 0;
+        map2 = new HashMap<>();
+        return helper2(nums, 0,target, MaxLen);
+    }
+
+//Yes, we need some restrictions for negative numbers.
+If all numbers are positive, it is like we have many paths to the destination, and we are asked to find all of them. If the problem asks for minimum number of numbers to make up the sum, it should be a shortest path problem. With this in mind, with negative numbers, there will be cycles, and the lengths of paths are infinite. So there is no shortest path.
+If the length of the path is restricted, then we may find paths.

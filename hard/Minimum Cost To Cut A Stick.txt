@@ -1,0 +1,51 @@
+class Solution {
+public:
+    vector<vector<int>> dp;
+    
+    int recursionSolve(int i, int j, vector<int>& cuts){
+        if (i > j) return 0;
+        if (dp[i][j] != -1) return dp[i][j];
+        
+        int ans = INT_MAX;
+        
+        for(int k = i ; k <= j ; k++){
+            int cost = cuts[j+1]-cuts[i-1]+recursionSolve(i,k-1,cuts)+recursionSolve(k+1,j,cuts);
+            ans = min(ans, cost);
+        }
+        dp[i][j] = ans;
+        return ans;
+    }
+    
+    int minCost(int n, vector<int>& cuts) {
+        vector<vector<int>> initDp(cuts.size()+2, vector<int>(cuts.size()+2,0));
+        dp = initDp;
+        cuts.push_back(0);
+        cuts.push_back(n);
+        
+        sort(cuts.begin(), cuts.end());
+        
+        for(int i = cuts.size() - 2 ; i >= 1 ; i--){
+            cout << i << endl;
+            for(int j = 1 ; j < cuts.size()-1 ; j++){
+                if (i > j) continue;
+                //if (dp[i][j] != -1) continue;
+
+                int ans = INT_MAX;
+
+                for(int k = i ; k <= j ; k++){
+                    // cout << i << " " << j << " " << k << endl;
+                    // cout << cuts[j+1]-cuts[i-1]+dp[i][k-1]+dp[k+1][j] << endl;
+                    int cost = cuts[j+1]-cuts[i-1]+dp[i][k-1]+dp[k+1][j];
+                    ans = min(ans, cost);
+                }
+                dp[i][j] = ans;
+            }
+        }
+        //cout << "im here";
+        return dp[1][cuts.size()-2];
+        //return recursionSolve(1,cuts.size()-2,cuts);
+        
+        
+        
+    }
+};

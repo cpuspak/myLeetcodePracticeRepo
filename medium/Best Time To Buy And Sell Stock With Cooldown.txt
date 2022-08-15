@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+//         vector<int> s0(prices.size(), 0); //resting state
+//         vector<int> s1(prices.size(), 0); //phase after buying a stock
+//         vector<int> s2(prices.size(), 0); //phase after selling a stock
+        
+//         s0[0] = 0;
+//         s1[0] = -prices[0];
+//         s2[0] = INT_MIN;
+        int previousHoldState, previousAfterBuyState, previousAfterSellState;
+        
+        int holdState = 0, afterBuyState = -prices[0], afterSellState = INT_MIN;
+        
+//         for(int i = 1 ; i < prices.size() ; i++){
+//             s0[i] = max(s0[i - 1], s2[i - 1]);
+//             s1[i] = max(s0[i - 1]-prices[i], s1[i - 1]);
+//             s2[i] = s1[i - 1]+prices[i];
+//         }
+        
+        for(int i = 1 ; i < prices.size() ; i++){
+            previousHoldState = holdState, previousAfterBuyState = afterBuyState, previousAfterSellState = afterSellState;
+            holdState = max(previousHoldState, previousAfterSellState);
+            afterBuyState = max(previousHoldState-prices[i], previousAfterBuyState);
+            afterSellState = previousAfterBuyState+prices[i];
+        }
+        
+        return max(holdState, afterSellState);
+        
+        
+        
+    }
+};
