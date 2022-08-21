@@ -1,0 +1,86 @@
+//my soln with O(n) time and O(n) space
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    unordered_map<int, int> inorderMap;
+    int getRootIndexInInorder(vector<int> &inorder, int val, int leftLimit, int rightLimit){
+        for(int i = leftLimit ; i <= rightLimit; i++) {
+            if (inorder[i] == val) return i;
+        }
+        return -1;
+    }
+    
+    TreeNode* createRecursiveTree(vector<int> &preorder, vector<int> &inorder, int &curRootIndexInPreorder, int leftInclInorder, int rightInclInorder){
+        //cout << curRootIndexInPreorder << " " << leftInclInorder << " " << rightInclInorder << endl;
+        if (leftInclInorder < 0 || leftInclInorder >= inorder.size() || rightInclInorder < 0 || 
+            rightInclInorder >= inorder.size() || leftInclInorder > rightInclInorder) return NULL;
+        TreeNode* curNode = new TreeNode(preorder[curRootIndexInPreorder]);
+        //int curRootIndexInInOrder = getRootIndexInInorder(inorder, preorder[curRootIndexInPreorder], leftInclInorder, rightInclInorder);
+        
+        int curRootIndexInInOrder = inorderMap[preorder[curRootIndexInPreorder]];
+        
+        curRootIndexInPreorder++;
+        if (leftInclInorder == rightInclInorder) return curNode;
+        //cout << curRootIndexInInOrder << "=" << curRootIndexInPreorder << "=" << preorder[curRootIndexInPreorder] << endl;
+        curNode->left = 
+            createRecursiveTree(preorder, inorder, curRootIndexInPreorder, leftInclInorder, curRootIndexInInOrder - 1);
+        curNode->right = 
+            createRecursiveTree(preorder, inorder, curRootIndexInPreorder, curRootIndexInInOrder+1, rightInclInorder);
+        return curNode;
+        
+    }
+    
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int curRootIndexInPreorder = 0;
+        
+        for(int i = 0 ; i < inorder.size() ; i++) inorderMap[inorder[i]] = i;
+        
+        TreeNode* newTreeRoot = createRecursiveTree(preorder, inorder, curRootIndexInPreorder, 0, inorder.size() - 1);
+        return newTreeRoot;
+    }
+};
+
+
+//solution with O(n) time and const space
+def buildTree(self, preorder, inorder):
+    def build(stop):
+        if inorder and inorder[-1] != stop:
+            root = TreeNode(preorder.pop())
+            root.left = build(root.val)
+            inorder.pop()
+            root.right = build(stop)
+            return root
+    preorder.reverse()
+    inorder.reverse()
+    return build(None)
+Note: See MissMary's answer for a possible improvement and my thoughts about it.
+
+Explanation/Discussion:
+
+Consider this input:
+
+preorder: [1, 2, 4, 5, 3, 6]
+inorder: [4, 2, 5, 1, 6, 3]
+The obvious way to build the tree is:
+
+Use the first element of preorder, the 1, as root.
+Search it in inorder.
+Split inorder by it, here into [4, 2, 5] and [6, 3].
+Split the rest of preorder into two parts as large as the inorder parts, here into [2, 4, 5] and [3, 6].
+Use preorder = [2, 4, 5] and inorder = [4, 2, 5] to add the left subtree.
+Use preorder =[3, 6]andinorder = [6, 3] to add the right subtree.
+But consider the worst case for this: A tree that's not balanced but is just a straight line to the left. Then inorder is the reverse of preorder, and already the cost of step 2, searching in inorder, is O(n^2) overall. Also, depending on how you "split" the arrays, you're looking at O(n^2) runtime and possibly O(n^2) space for that as well.
+
+You can bring the runtime for searching down to O(n) by building a map from value to index before you start the main work, and I've seen several solutions do that. But that is O(n) additional space, and also the splitting problems remain. To fix those, you can use pointers into preorder and inorder instead of splitting them. And when you're doing that, you don't need the value-to-index map, either.
+
+Consider the example again. Instead of finding the 1 in inorder, splitting the arrays into parts and recursing on them, just recurse on the full remaining arrays and stop when you come across the 1 in inorder. That's what my above solution does. Each recursive call gets told where to stop, and it tells its subcalls where to stop. It gives its own root value as stopper to its left subcall and its parent`s stopper as stopper to its right subcall.
