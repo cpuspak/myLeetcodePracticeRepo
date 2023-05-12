@@ -8,35 +8,20 @@ public:
         
         if (sum_ % 2 == 1) return false;
         bool ans = false;
-        //sort(nums.begin(), nums.end());
         
         //knapsack implementation
         vector<int> dp((sum_/2)+1, 0);
-        //cout << "im here";
         if(nums[0] <= (sum_/2)) dp[nums[0]] = 1;
-        //cout << "im here";
         for(int i = 1 ; i < nums.size() ; i++){
-            //cout << i << endl;
-            // for(int i:dp){
-            //     cout<<i<<" ";
-            // }
-            // cout<<endl;
-            // cout<<nums[i]<<endl;
             for(int j = sum_/2 ; j >= 1 ; j--){
                 if(nums[i] == j) {
                     dp[j] = 1;
-                    //cout<<"(i)j="<<j<<endl;
                 }
                 else if (j > nums[i]) {
                     dp[j] = dp[j] | dp[j-nums[i]];
-                    //cout<<"(ii)j="<<j<<endl;
                 }
             }    
         }
-        // for(int i:dp){
-        //     cout<<i<<" ";
-        // }
-        // cout<<endl;
         if(dp[(sum_/2)] == 1) return true;
         return false;
         
