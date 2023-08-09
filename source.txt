@@ -1,1 +1,2 @@
 seanprashad.com/leetcode-patterns/
+https://github.com/donnemartin/system-design-primer#study-guide

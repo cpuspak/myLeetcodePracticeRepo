@@ -1,0 +1,26 @@
+class Solution {
+public:
+
+    void swap(int *a, int *b) {
+        int c = *a;
+        *a = *b;
+        *b = c;
+    }
+    void moveZeroes(vector<int>& nums) {
+
+        //secondPointer -> non zero, firstPointer -> zero
+        int firstPointer = 0, secondPointer = 0;
+
+        while(secondPointer < nums.size() && nums[secondPointer] == 0) secondPointer ++;
+        while(firstPointer < nums.size() && nums[firstPointer] != 0) firstPointer ++;
+        while(secondPointer < nums.size() && firstPointer < nums.size()) {
+            // cout<<"in loop"<<secondPointer<<" "<<firstPointer;
+            if (secondPointer > firstPointer) {
+                nums[firstPointer] = nums[secondPointer];
+                nums[secondPointer] = 0;
+            } else secondPointer++;
+            while(secondPointer < nums.size() && nums[secondPointer] == 0) secondPointer ++;
+            while(firstPointer < nums.size() && nums[firstPointer] != 0) firstPointer ++;
+        }
+    }
+};
